@@ -1,0 +1,157 @@
+Deck,Meta,Winrate,My Winrate,Archetype,WeekIndex,Deck Display Name,Encounter Copies,Encounter Probability,Importance,Quartile,Prep Priority,Performance Label,Trend Label,Pillar,Emerging Threat,Declining Threat,Level
+	Boros Energy,14.8,54.0,55.0,Aggro,1.0,Boros Energy,182.0,0.5515995457009036,1.0,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,1.0,Affinity,119.0,0.3992890187482481,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,1.0,Jeskai Blink,90.0,0.3165303415831126,0.4976351351351351,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,1.0,Izzet Prowess,81.0,0.2890729402703199,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,1.0,Ruby Storm,74.0,0.2671129978773547,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,1.0,Esper Phelia,55.0,0.2047602349124305,0.2873648648648648,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,1.0,Domain Aggro,50.0,0.1876662571645788,0.303581081081081,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,1.0,Rogue,47.0,0.1772696145779535,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,1.0,Eldrazi Ramp,45.0,0.1702795819765759,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,1.0,Amulet Titan,43.0,0.1632421192815661,0.3530405405405405,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,1.0,Esper Reanimator,40.0,0.1525964664792754,0.2296621621621621,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,1.0,Golgari Yawgmoth,37.0,0.1418427369071499,0.4437837837837837,Q4,Very High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,1.0,Simic Ritual,36.0,0.1382340015703423,0.402027027027027,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,1.0,Neoform,32.0,0.1236774523919394,0.3118918918918918,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,1.0,Eldrazi Tron,31.0,0.1200077599815204,0.1201351351351351,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,1.0,Tameshi Belcher,28.0,0.1089248585176314,0.2198648648648648,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,1.0,Azorius Control,21.0,0.0826301430749287,0.1188513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,1.0,Grixis Reanimator,18.0,0.0711726941469073,0.1459459459459459,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,1.0,Eldrazi Bloodchief Combo,18.0,0.0711726941469073,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,1.0,Azorius Blink,15.0,0.0596010523163557,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.69,49.56099620092867,48.56141831996624,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.1389192666452235,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.2613562114052082,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype
+	Boros Energy,14.8,54.0,55.0,Aggro,2.0,Boros Energy,183.0,0.5518357171277707,1.0,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,2.0,Affinity,120.0,0.4004162805021442,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,2.0,Jeskai Blink,91.0,0.3182029506355635,0.4976351351351351,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,2.0,Izzet Prowess,81.0,0.2878515545723281,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,2.0,Ruby Storm,74.0,0.2659697466507894,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,2.0,Esper Phelia,55.0,0.2038533155254586,0.2873648648648648,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,2.0,Domain Aggro,50.0,0.1868276735868053,0.303581081081081,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,2.0,Rogue,47.0,0.1764733058877151,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,2.0,Eldrazi Ramp,45.0,0.1695119941523112,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,2.0,Amulet Titan,43.0,0.1625036863696351,0.3530405405405405,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,2.0,Esper Reanimator,40.0,0.1519025872408071,0.2296621621621621,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,2.0,Golgari Yawgmoth,38.0,0.1447757482960171,0.4437837837837837,Q4,Very High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,2.0,Simic Ritual,36.0,0.1376010783683476,0.402027027027027,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,2.0,Neoform,33.0,0.126748864385001,0.3118918918918918,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,2.0,Eldrazi Tron,31.0,0.1194535636829629,0.1201351351351351,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,2.0,Tameshi Belcher,28.0,0.1084192696389652,0.2198648648648648,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,2.0,Azorius Control,21.0,0.082242048283273,0.1188513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,2.0,Grixis Reanimator,19.0,0.0746510292594723,0.1459459459459459,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,2.0,Eldrazi Bloodchief Combo,18.0,0.0708367301220423,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,2.0,Azorius Blink,15.0,0.0593183022899663,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.69,49.56099620092867,48.56141831996624,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.1389192666452235,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.2613562114052082,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype
+	Boros Energy,14.8,54.0,55.0,Aggro,3.0,Boros Energy,183.0,0.5518357171277707,1.0,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,3.0,Affinity,120.0,0.4004162805021442,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,3.0,Jeskai Blink,91.0,0.3182029506355635,0.4976351351351351,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,3.0,Izzet Prowess,81.0,0.2878515545723281,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,3.0,Ruby Storm,74.0,0.2659697466507894,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,3.0,Esper Phelia,55.0,0.2038533155254586,0.2873648648648648,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,3.0,Domain Aggro,50.0,0.1868276735868053,0.303581081081081,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,3.0,Rogue,47.0,0.1764733058877151,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,3.0,Eldrazi Ramp,45.0,0.1695119941523112,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,3.0,Amulet Titan,43.0,0.1625036863696351,0.3530405405405405,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,3.0,Esper Reanimator,40.0,0.1519025872408071,0.2296621621621621,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,3.0,Golgari Yawgmoth,38.0,0.1447757482960171,0.4437837837837837,Q4,Very High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,3.0,Simic Ritual,36.0,0.1376010783683476,0.402027027027027,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,3.0,Neoform,33.0,0.126748864385001,0.3118918918918918,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,3.0,Eldrazi Tron,31.0,0.1194535636829629,0.1201351351351351,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,3.0,Tameshi Belcher,28.0,0.1084192696389652,0.2198648648648648,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,3.0,Azorius Control,21.0,0.082242048283273,0.1188513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,3.0,Grixis Reanimator,19.0,0.0746510292594723,0.1459459459459459,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,3.0,Eldrazi Bloodchief Combo,18.0,0.0708367301220423,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,3.0,Azorius Blink,15.0,0.0593183022899663,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.69,49.56099620092867,48.56141831996624,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.1389192666452235,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.2613562114052082,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype
+	Boros Energy,14.8,54.0,55.0,Aggro,4.0,Boros Energy,183.0,0.5524687575160888,1.0,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,4.0,Affinity,120.0,0.4009403455476494,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,4.0,Jeskai Blink,91.0,0.3186434336479583,0.4976351351351351,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,4.0,Izzet Prowess,81.0,0.288257547355019,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,4.0,Ruby Storm,74.0,0.266349751253208,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,4.0,Esper Phelia,55.0,0.2041547322069449,0.2873648648648648,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,4.0,Domain Aggro,50.0,0.1871063706715193,0.303581081081081,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,4.0,Rogue,47.0,0.1767379486756886,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,4.0,Eldrazi Ramp,45.0,0.1697670890249593,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,4.0,Amulet Titan,43.0,0.1627490893078778,0.3530405405405405,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,4.0,Esper Reanimator,40.0,0.1521331797680745,0.2296621621621621,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,4.0,Golgari Yawgmoth,38.0,0.1449962838855333,0.4437837837837837,Q4,Very High Prep Priority,Underplayed Winner,Stable,True,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,4.0,Simic Ritual,36.0,0.1378114090229625,0.402027027027027,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,4.0,Neoform,32.0,0.1232967555309758,0.3118918918918918,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,4.0,Eldrazi Tron,31.0,0.1196377269647445,0.1201351351351351,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,4.0,Tameshi Belcher,28.0,0.108587277539891,0.2198648648648648,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,4.0,Azorius Control,21.0,0.0823710077636274,0.1188513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,4.0,Grixis Reanimator,19.0,0.0747684789433437,0.1459459459459459,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,4.0,Eldrazi Bloodchief Combo,18.0,0.0709483653138777,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,4.0,Azorius Blink,15.0,0.0594122538344974,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.69,49.56099620092867,48.56141831996624,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.1389192666452235,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.2613562114052082,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype
+	Boros Energy,14.8,54.0,55.0,Aggro,5.0,Boros Energy,183.0,0.5518357171277707,1.0,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,5.0,Affinity,120.0,0.4004162805021442,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,5.0,Jeskai Blink,91.0,0.3182029506355635,0.4976351351351351,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,5.0,Izzet Prowess,81.0,0.2878515545723281,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,5.0,Ruby Storm,74.0,0.2659697466507894,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,5.0,Esper Phelia,55.0,0.2038533155254586,0.2873648648648648,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,5.0,Domain Aggro,50.0,0.1868276735868053,0.303581081081081,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,5.0,Rogue,47.0,0.1764733058877151,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,5.0,Eldrazi Ramp,45.0,0.1695119941523112,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,5.0,Amulet Titan,43.0,0.1625036863696351,0.3530405405405405,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,5.0,Esper Reanimator,40.0,0.1519025872408071,0.2296621621621621,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,5.0,Golgari Yawgmoth,38.0,0.1447757482960171,0.4437837837837837,Q4,Very High Prep Priority,Underplayed Winner,Stable,True,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,5.0,Simic Ritual,36.0,0.1376010783683476,0.402027027027027,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,5.0,Neoform,33.0,0.126748864385001,0.3118918918918918,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,5.0,Eldrazi Tron,31.0,0.1194535636829629,0.1201351351351351,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,5.0,Tameshi Belcher,28.0,0.1084192696389652,0.2198648648648648,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,5.0,Azorius Control,21.0,0.082242048283273,0.1188513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,5.0,Grixis Reanimator,19.0,0.0746510292594723,0.1459459459459459,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,5.0,Eldrazi Bloodchief Combo,18.0,0.0708367301220423,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,5.0,Azorius Blink,15.0,0.0593183022899663,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.69,49.56099620092867,48.56141831996624,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.1389192666452235,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.2613562114052082,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype
+	Boros Energy,14.8,54.0,55.0,Aggro,6.0,Boros Energy,183.0,0.5518357171277707,1.0,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Affinity,9.71,53.0,52.0,Aggro,6.0,Affinity,120.0,0.40041628050214423,0.7217567567567568,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Jeskai Blink,7.35,50.0,55.0,Midrange,6.0,Jeskai Blink,91.0,0.31820295063556353,0.49763513513513513,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Izzet Prowess,6.58,48.0,34.0,Aggro,6.0,Izzet Prowess,81.0,0.2878515545723281,0.3862162162162162,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Ruby Storm,5.99,51.0,49.0,Combo,6.0,Ruby Storm,74.0,0.26596974665078943,0.4708108108108108,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Deck
+	Esper Phelia,4.49,48.0,49.0,Midrange,6.0,Esper Phelia,55.0,0.20385331552545866,0.28736486486486484,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Domain Aggro,4.04,49.0,50.0,Midrange,6.0,Domain Aggro,50.0,0.18682767358680533,0.30358108108108106,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Rogue,3.81,50.0,50.0,,6.0,Rogue,47.0,0.17647330588771512,0.3302027027027027,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Eldrazi Ramp,3.63,47.0,54.0,Ramp,6.0,Eldrazi Ramp,45.0,0.16951199415231127,0.2091891891891892,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+	Amulet Titan,3.5,51.0,59.0,Combo,6.0,Amulet Titan,43.0,0.1625036863696351,0.35304054054054057,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+	Esper Reanimator,3.27,48.0,52.0,Midrange,6.0,Esper Reanimator,40.0,0.15190258724080719,0.22966216216216212,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Golgari Yawgmoth,3.04,54.0,28.0,Midrange,6.0,Golgari Yawgmoth,38.0,0.14477574829601714,0.44378378378378375,Q4,Very High Prep Priority,Underplayed Winner,Stable,True,False,False,Deck
+	Simic Ritual,2.95,53.0,62.0,Combo,6.0,Simic Ritual,36.0,0.13760107836834765,0.40202702702702703,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Neoform,2.63,51.0,48.0,Combo,6.0,Neoform,33.0,0.126748864385001,0.31189189189189187,Q2,Medium Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+Eldrazi Tron,2.54,46.0,48.0,Ramp,6.0,Eldrazi Tron,31.0,0.11945356368296299,0.12013513513513513,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+	Tameshi Belcher,2.27,49.0,50.0,Combo,6.0,Tameshi Belcher,28.0,0.10841926963896528,0.21986486486486484,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+	Azorius Control,1.72,47.0,39.0,Control,6.0,Azorius Control,21.0,0.08224204828327308,0.11885135135135133,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Grixis Reanimator,1.5,48.0,46.0,Midrange,6.0,Grixis Reanimator,19.0,0.07465102925947237,0.14594594594594593,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Bloodchief Combo,1.45,53.0,49.0,Combo,6.0,Eldrazi Bloodchief Combo,18.0,0.07083673012204232,0.3310810810810811,Q3,High Prep Priority,Underplayed Winner,Stable,False,False,False,Deck
+	Azorius Blink,1.18,46.0,28.0,Control,6.0,Azorius Blink,15.0,0.059318302289966394,0.0558108108108108,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,31.090000000000003,52.41781923448054,49.61852685751045,Aggro,,,,,1.0,Q4,Very High Prep Priority,Neutral,,,,,Archetype
+Combo,18.79,51.22671633847792,52.88451303885045,Combo,,,,,0.6617649567404151,Q3,High Prep Priority,Neutral,,,,,Archetype
+Control,2.9,46.59310344827586,34.52413793103449,Control,,,,,0.0655399278571712,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Midrange,23.689999999999998,49.56099620092867,48.561418319966236,Midrange,,,,,0.6863677138063697,Q4,Very High Prep Priority,Popular Trap,,,,,Archetype
+Ramp,6.17,46.58833063209076,51.52998379254457,Ramp,,,,,0.13891926664522353,Q1,Low Prep Priority,Neutral,,,,,Archetype
+Rogue,3.81,50.0,50.0,Rogue,,,,,0.26135621140520826,Q2,Medium Prep Priority,Underplayed Winner,,,,,Archetype

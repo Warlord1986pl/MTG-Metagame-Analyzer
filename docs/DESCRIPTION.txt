@@ -1,0 +1,231 @@
+DESCRIPTION OF MTG METAGAME ANALYZER
+=====================================
+
+PROJECT OVERVIEW
+----------------
+MTG Metagame Analyzer is a data analysis tool designed for Magic: The Gathering players, 
+tournament organizers, and competitive meta researchers. It processes metagame data from 
+tournaments and provides comprehensive visualizations and statistical analysis.
+
+WHAT IT DOES
+------------
+
+1. DATA INPUT & PROCESSING
+   - Reads deck metagame percentages and win rates from Excel files
+   - Optionally loads historical data from previous weeks
+   - Cleans deck names (removes special symbols like □■▪•)
+   - Automatically calculates week index for new data
+
+2. STATISTICAL ANALYSIS
+   - Calculates hypergeometric probabilities for deck encounters
+   - Computes importance scores combining metagame prevalence and performance
+   - Assigns quartile-based "Prep Priority" rankings
+   - Categorizes decks as "Underplayed Winners" or "Popular Traps"
+   - Tracks trend direction (rising/falling/stable) over time
+
+3. ARCHETYPE AGGREGATION
+   - Groups individual decks by archetype
+   - Calculates weighted averages for archetype-level metrics
+   - Generates separate analysis for archetype trends
+
+4. VISUALIZATION GENERATION
+   - Bar charts showing encounter probabilities (rainbow color gradient)
+   - Line charts tracking metagame trends over multiple weeks
+   - Color-coded legend indicating prep priority levels
+   - Performance labels on all visualizations
+   - Interactive features via mplcursors for data exploration
+
+5. DATA EXPORT
+   - Excel files (.xlsx) with detailed metrics
+   - CSV files for historical data tracking
+   - PNG images of all charts
+   - Automatic ZIP packaging of results
+
+KEY CALCULATIONS
+----------------
+
+ENCOUNTER PROBABILITY:
+Uses hypergeometric distribution to answer: "What's the chance I face this deck?"
+- Input: Tournament size (N), players piloting deck (K), opponents faced (5)
+- Output: Probability of encountering ≥1 player with that deck
+- Accounts for real tournament structures
+
+IMPORTANCE SCORE (0-1 scale):
+Importance = 0.70 × (Meta% / Max Meta%) + 0.30 × (Winrate - Min WR) / (Max WR - Min WR)
+- 70% weight on metagame prevalence (how common the deck is)
+- 30% weight on performance (how strong the deck performs)
+- Results in 4 quartiles for prep priority
+
+PREP PRIORITY QUARTILES:
+- Q4 (Very High): Top 25% - Critical to prepare for
+- Q3 (High): 25-50% - Recommended to prepare for
+- Q2 (Medium): 50-75% - Optional preparation
+- Q1 (Low): Bottom 25% - Minimal preparation needed
+
+PERFORMANCE LABELS:
+- Underplayed Winner: Below-median meta% + Above-median winrate
+  → Insight: This deck is underrepresented despite being strong
+  → Action: Consider playing it or sideboard for it
+  
+- Popular Trap: Above-median meta% + Below-median winrate
+  → Insight: Many players are piloting an overrated deck
+  → Action: Prepare to exploit these pilots
+  
+- Neutral: All other combinations
+  → Insight: Deck performs as expected given popularity
+
+TREND CALCULATION (4-week lookback):
+Compares oldest vs newest data points
+- Rising: Latest meta% - Oldest meta% > 0.5%
+- Falling: Latest meta% - Oldest meta% < -0.5%
+- Stable: Between ±0.5%
+
+INPUT REQUIREMENTS
+------------------
+
+Excel File MUST contain:
+- Column "Deck": Deck name (string, any symbols allowed)
+- Column "Meta": Metagame percentage (number, 0-100 scale)
+- Column "Winrate": Win rate as decimal (number, 0-1 scale)
+
+Excel File OPTIONAL columns:
+- "Archetype": Deck type for grouping (string)
+- "My Winrate": Your personal win rate against this deck (number, 0-1)
+
+CSV History File (optional):
+- Same columns as Excel file plus "WeekIndex" (auto-calculated)
+- Used to track trends across weeks
+- Generated automatically as output file
+
+OUTPUT FILES EXPLAINED
+----------------------
+
+deck_analysis_W{N}.xlsx:
+- One row per deck in week N
+- Includes all calculated metrics:
+  * Meta%, Winrate, Importance score
+  * Encounter probability and copies
+  * Quartile and Prep Priority
+  * Performance label (Underplayed Winner, etc.)
+  * Trend status
+
+deck_analysis_ARCHETYPE_W{N}.xlsx:
+- One row per archetype (aggregated from decks)
+- Same metrics but at archetype level
+- Used for broader meta strategy
+
+Metagame_History_W{N}.csv:
+- Complete historical record of weeks 1-N
+- Use as input file next week to maintain continuity
+- Enables trend chart generation
+
+encounter_prob_Deck_W{N}.png:
+- Horizontal bar chart
+- X-axis: Encounter probability (0-1)
+- Y-axis: Deck names (sorted by probability)
+- Color gradient: Rainbow (cold to warm)
+- Text labels: Probability %, prep priority color-coded
+- Legend: Prep priority levels + performance labels
+
+meta_trend_Deck_W{N}_last{X}w.png:
+- Line chart showing trend over last X weeks
+- X-axis: Week number
+- Y-axis: Metagame % (0-100)
+- One line per deck (top 10 by meta%)
+- Markers: Filled circles on each data point
+- Legend: Deck names with trend symbol (^ v -)
+- Requires: At least 2 weeks of history
+
+USE CASES
+---------
+
+1. TOURNAMENT PREPARATION
+   User: "What do I need to prepare for this weekend?"
+   Tool Output: Deck rankings by prep priority + trend charts
+   Action: Focus deck tuning on Q4 and Q3 decks
+
+2. META ANALYSIS & REPORTING
+   User: "What's the current metagame composition?"
+   Tool Output: Full deck analysis with performance labels
+   Action: Write meta report or tournament coverage
+
+3. ARCHETYPE PERFORMANCE TRACKING
+   User: "How is the Aggro archetype performing overall?"
+   Tool Output: Archetype-level aggregation and trends
+   Action: Identify if entire strategies are rising/falling
+
+4. WEEK-TO-WEEK MONITORING
+   User: "How has the meta evolved since last week?"
+   Tool Output: Trend charts showing direction of each deck
+   Action: Identify emerging threats and declining decks
+
+5. PERSONAL META PERFORMANCE
+   User: "Which decks should I focus on with My Winrate data?"
+   Tool Output: Decks showing * symbol (have My Winrate data)
+   Action: Prioritize sideboard space for good matchups
+
+TECHNICAL SPECIFICATIONS
+------------------------
+
+Language: Python 3.8+
+Dependencies: pandas, numpy, matplotlib, openpyxl, mplcursors
+Runtime: 30-120 seconds (depending on data size and history)
+Memory: <500MB typical
+Output Format: Excel (.xlsx), CSV (.csv), PNG (300 DPI)
+
+COLORMAPS USED
+--------------
+
+Encounter Probability Chart:
+- Bar colors: matplotlib "rainbow" colormap
+- Reversed gradient (red → violet) for visual hierarchy
+- Text colors: Red (Very High) → Orange → Blue → Green (Low)
+
+Trend Chart:
+- One unique color per deck from rainbow palette
+- Reversed order for consistency
+- Markers: Filled circles, size 8px
+
+BEST PRACTICES FOR DATA INPUT
+------------------------------
+
+1. Deck Naming:
+   - Use consistent naming across weeks
+   - Include markers (□ ■ ▪ •) if desired - they'll be cleaned automatically
+   - Example: "Boros Energy □" becomes "Boros Energy" in display
+
+2. Meta Percentages:
+   - Should sum to 100% (or close, accounting for rounding)
+   - Use decimal format (5.2, not 5.2%)
+   - Include "Rogue" category for deck % too small to track individually
+
+3. Win Rate Data:
+   - Decimal format: 0.52 means 52%
+   - Field win rates from reliable sources (SCG, CFB, etc.)
+   - Ensure sample size is large (100+ matches minimum)
+
+4. History Tracking:
+   - Save previous week's output CSV and reuse as input
+   - Maintains continuity of deck identification
+   - Enables proper trend calculations
+
+VERSION HISTORY
+---------------
+
+v1.1 (February 2026):
+- Fixed legend marker display issue
+- Reversed colormap order for better visual hierarchy
+- ASCII symbols for trend indicators (^ v -)
+- Improved special character handling in deck names
+- Better error messages for missing columns
+
+v1.0 (January 2026):
+- Initial release
+- Core analysis functionality
+- Google Colab optimization
+- Multi-chart generation
+
+---
+
+Document Version: 1.1
+Last Updated: February 4, 2026
