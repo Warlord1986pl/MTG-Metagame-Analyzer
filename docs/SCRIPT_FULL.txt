@@ -1,12 +1,12 @@
-MTG METAGAME ANALYZER - FULL SCRIPT
-====================================
-
-This is the complete English script saved as .txt for easy reading and copying.
-To use: Copy all content below and paste into Google Colab, then Run All.
-
-================================================================================
-SECTION 1: SETUP & IMPORTS
-================================================================================
+# MTG METAGAME ANALYZER - FULL SCRIPT
+# ====================================
+# 
+# This is the complete English script saved as .txt for easy reading and copying.
+# To use: Copy all content below and paste into Google Colab, then Run All.
+#
+# ================================================================================
+# SECTION 1: SETUP & IMPORTS
+# ================================================================================
 
 # MTG METAGAME ANALYSIS - GOOGLE COLAB
 # =====================================
@@ -29,9 +29,9 @@ from matplotlib.lines import Line2D
 import numpy as np
 import sys
 
-================================================================================
-SECTION 2: HELPER FUNCTIONS - PROBABILITY & METRICS
-================================================================================
+# ================================================================================
+# SECTION 2: HELPER FUNCTIONS - PROBABILITY & METRICS
+# ================================================================================
 
 def hypergeometric_probability(N, K, sample_size, threshold=1):
     """Calculate probability of encountering a given deck"""
@@ -50,7 +50,7 @@ def hypergeometric_probability(N, K, sample_size, threshold=1):
     return prob / total
 
 def prep_priority(quartile):
-    """Determine preparation priority level"""
+    """Determines preparation priority based on quartile"""
     mapping = {
         'Q4': 'Very High Prep Priority',
         'Q3': 'High Prep Priority',
@@ -60,7 +60,7 @@ def prep_priority(quartile):
     return mapping.get(quartile, 'Low Prep Priority')
 
 def trend_label(current, past_avg, threshold=1.0):
-    """Determine deck trend status (Rising/Falling/Stable)"""
+    """Determines deck trend status (Rising/Falling/Stable)"""
     if current - past_avg > threshold:
         return 'Rising Deck'
     elif current - past_avg < -threshold:
@@ -68,37 +68,8 @@ def trend_label(current, past_avg, threshold=1.0):
     else:
         return 'Stable'
 
-================================================================================
-SECTION 3: COLOR DEFINITIONS
-================================================================================
-
-# Color palettes for different metric types
-
-PERFORMANCE_COLORS = {
-    'Underplayed Winner': "#b9f03a",      # Bright green
-    'Popular Trap': "#f07431",             # Orange
-    'Neutral': '#000000'                   # Black
-}
-
-PREP_PRIORITY_COLORS = {
-    'Very High Prep Priority': 'red',
-    'High Prep Priority': 'orange',
-    'Medium Prep Priority': 'blue',
-    'Low Prep Priority': 'green'
-}
-
-TREND_COLORS = {
-    'Rising Deck': '#2ecc71',              # Green
-    'Falling Deck': '#e74c3c',             # Red
-    'Stable': '#95a5a6'                    # Gray
-}
-
-================================================================================
-SECTION 4: DATA AGGREGATION FUNCTIONS
-================================================================================
-
 def aggregate_by_archetype(df_results):
-    """Aggregate deck data by archetype"""
+    """Aggregates deck data by archetype"""
     df = df_results.copy()
     df['Archetype'] = df.get('Archetype', pd.Series()).fillna('Rogue')
     df_arch = (
@@ -116,7 +87,7 @@ def aggregate_by_archetype(df_results):
     return df_arch
 
 def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
-    """Calculate metrics for archetypes"""
+    """Calculates metrics for archetypes"""
     df = df_arch.copy()
     df['Encounter Copies'] = (total_players * df['Meta'] / 100).round().astype(int)
     df['Encounter Probability'] = df.apply(
@@ -154,12 +125,63 @@ def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
     df['Performance Label'] = df.apply(perf_label, axis=1)
     return df
 
-================================================================================
-SECTION 5: CHART GENERATION - ENCOUNTER PROBABILITY
-================================================================================
+# ================================================================================
+# SECTION 3: COLOR DEFINITIONS
+# ================================================================================
+
+PERFORMANCE_COLORS = {
+    'Underplayed Winner': "#b9f03a",
+    'Popular Trap': "#f07431",
+    'Neutral': '#000000'
+}
+
+PREP_PRIORITY_COLORS = {
+    'Very High Prep Priority': 'red',
+    'High Prep Priority': 'orange',
+    'Medium Prep Priority': 'blue',
+    'Low Prep Priority': 'green'
+}
+
+TREND_COLORS = {
+    'Rising Deck': '#2ecc71',
+    'Falling Deck': '#e74c3c',
+    'Stable': '#95a5a6'
+}
+
+# ================================================================================
+# SECTION 4: DATA AGGREGATION FUNCTIONS
+# ================================================================================
+
+def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
+    """Calculates the trend status for a deck"""
+    deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
+    
+    if len(deck_history) < 2:
+        return 'Stable', TREND_COLORS['Stable']
+    
+    recent = deck_history.tail(weeks_back)
+    
+    if len(recent) < 2:
+        return 'Stable', TREND_COLORS['Stable']
+    
+    weeks = recent['WeekIndex'].values
+    meta_values = recent['Meta'].values
+    trend_change = meta_values[-1] - meta_values[0]
+    threshold = 0.5
+    
+    if trend_change > threshold:
+        return 'Rising', TREND_COLORS['Rising Deck']
+    elif trend_change < -threshold:
+        return 'Falling', TREND_COLORS['Falling Deck']
+    else:
+        return 'Stable', TREND_COLORS['Stable']
+
+# ================================================================================
+# SECTION 5: ENCOUNTER PROBABILITY CHART
+# ================================================================================
 
 def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck"):
-    """Create encounter probability bar chart"""
+    """Creates bar chart showing encounter probability"""
     plt.figure(figsize=(20, 12))
     df_sorted = df_results.sort_values('Encounter Probability', ascending=False).reset_index(drop=True)
     num_decks = len(df_sorted)
@@ -212,36 +234,12 @@ def create_encounter_probability_chart(df_results, week_num, N_players, chart_ty
         print(f"ℹ {my_wr_count} decks use My Winrate (marked with *)")
     return out_png
 
-================================================================================
-SECTION 6: TREND CALCULATION & VISUALIZATION
-================================================================================
-
-def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
-    """Calculate deck trend status"""
-    deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
-    
-    if len(deck_history) < 2:
-        return 'Stable', TREND_COLORS['Stable']
-    
-    recent = deck_history.tail(weeks_back)
-    
-    if len(recent) < 2:
-        return 'Stable', TREND_COLORS['Stable']
-    
-    weeks = recent['WeekIndex'].values
-    meta_values = recent['Meta'].values
-    trend_change = meta_values[-1] - meta_values[0]
-    threshold = 0.5
-    
-    if trend_change > threshold:
-        return 'Rising', TREND_COLORS['Rising Deck']
-    elif trend_change < -threshold:
-        return 'Falling', TREND_COLORS['Falling Deck']
-    else:
-        return 'Stable', TREND_COLORS['Stable']
+# ================================================================================
+# SECTION 6: TREND CALCULATION & VISUALIZATION
+# ================================================================================
 
 def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck"):
-    """Create trend chart - FIXED (clean legend, reversed colors)"""
+    """Creates trend chart showing meta shifts over weeks"""
     if len(df_history) == 0:
         print("ℹ No history data available for trend chart")
         return None
@@ -266,7 +264,6 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     
     cmap = plt.cm.rainbow
     num_decks = len(selected_decks)
-    # Reversed color mapping
     deck_colors = {deck: cmap(1 - i / max(1, num_decks - 1)) for i, deck in enumerate(selected_decks)}
     
     legend_elements = []
@@ -276,7 +273,6 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
         if len(deck_data) > 0:
             trend_status, _ = calculate_deck_trend_status(df_history, deck, weeks_back)
             trend_symbol = '^' if trend_status == 'Rising' else 'v' if trend_status == 'Falling' else '-'
-            # Use cleaned name without symbols
             display_name = deck_display_names.get(deck, deck)
             label = f"{display_name} {trend_symbol}"
             
@@ -284,7 +280,6 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
                     marker='o', linewidth=2.5, markersize=8, 
                     color=deck_colors[deck])
             
-            # Legend with matching markers
             legend_elements.append(
                 Line2D([0], [0], color=deck_colors[deck], linewidth=2.5, 
                        marker='o', markersize=6, label=label)
@@ -316,9 +311,9 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     print(f"✅ Trend chart saved: {out_png}")
     return out_png
 
-================================================================================
-SECTION 7: MAIN ANALYSIS ENGINE
-================================================================================
+# ================================================================================
+# SECTION 7: MAIN ANALYSIS ENGINE
+# ================================================================================
 
 def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1000):
     """Main metagame analysis function"""
@@ -411,19 +406,17 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     print("✅ Analysis complete!")
     return df_new, df_history, this_week_idx, total_players
 
-================================================================================
-SECTION 8: PROGRAM EXECUTION
-================================================================================
+# ================================================================================
+# SECTION 8: PROGRAM EXECUTION
+# ================================================================================
 
 from google.colab import files
 import zipfile
-import os
 
 print("\n" + "="*80)
 print("MTG METAGAME ANALYSIS - START")
 print("="*80 + "\n")
 
-# Upload Excel file
 print("📁 Upload Excel file (columns: Deck, Meta, Winrate):")
 uploaded = files.upload()
 
@@ -434,8 +427,7 @@ if not uploaded:
 excel_file = list(uploaded.keys())[0]
 print(f"✓ Loaded: {excel_file}\n")
 
-# Upload history file (optional)
-print("📁 (OPTIONAL) Upload CSV history file:")
+print("📁 (OPTIONAL) Upload history CSV file:")
 print("   If you don't have history, just click 'Cancel' below.\n")
 try:
     uploaded_hist = files.upload()
@@ -447,30 +439,25 @@ except Exception:
     history_csv = None
     print("ℹ Continuing without history\n")
 
-# Player count
 try:
-    N_players = int(input("Player count for calculations (default 1000): ").strip() or 1000)
+    N_players = int(input("Number of players for calculations (default 1000): ").strip() or 1000)
 except Exception:
     N_players = 1000
 
 print(f"\n🔄 Starting analysis (N={N_players} players)...\n")
 
-# Run analysis
 df_results, df_history, week_num, N_players = analyze_metagame(excel_file, history_csv, N_players)
 
 print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nunique()} weeks")
 
-# Generate archetype charts
 print("\n📊 Generating archetype charts...")
 df_arch = aggregate_by_archetype(df_results)
 df_arch = calculate_archetype_metrics(df_arch, N_players)
 arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype")
 
-# Generate deck charts
 print("\n📊 Generating deck charts...")
 deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck")
 
-# Prepare data for export
 df_arch['Level'] = 'Archetype'
 df_arch['Deck'] = df_arch['Archetype']
 
@@ -480,7 +467,6 @@ df_arch_for_history = df_arch[[col for col in arch_cols_to_keep if col in df_arc
 
 df_history_combined = pd.concat([df_history, df_arch_for_history], ignore_index=True)
 
-# Save files
 excel_out = f'deck_analysis_W{week_num}.xlsx'
 csv_out = f'Metagame_History_W{week_num}.csv'
 arch_excel_out = f'deck_analysis_ARCHETYPE_W{week_num}.xlsx'
@@ -491,7 +477,6 @@ df_history_combined.to_csv(csv_out, index=False)
 
 print(f"\n💾 Saved: {excel_out}, {arch_excel_out}, {csv_out}")
 
-# Trend chart (if history available)
 trend_chart = None
 unique_weeks = df_history['WeekIndex'].nunique() if len(df_history) > 0 else 0
 
@@ -515,16 +500,14 @@ if unique_weeks > 1:
 else:
     print("\nℹ Trend chart requires at least 2 weeks of history")
 
-# Show top decks
 print("\n📊 TOP Very High Prep Priority Decks:")
 top_df = df_results[df_results['Prep Priority'] == 'Very High Prep Priority'][
     ['Deck Display Name', 'Meta', 'Winrate', 'Encounter Probability', 'Prep Priority']
 ].head(10)
-display(top_df)
+print(top_df)
 
 print(f"\n📈 Encounter probability range (N={N_players}): {df_results['Encounter Probability'].min():.1%} - {df_results['Encounter Probability'].max():.1%}")
 
-# Download all files as ZIP
 print("\n📦 Preparing files for download...")
 outputs = [excel_out, csv_out, arch_excel_out, arch_chart, deck_chart]
 if trend_chart:
@@ -548,19 +531,3 @@ else:
 print("\n" + "="*80)
 print("✅ ANALYSIS COMPLETED SUCCESSFULLY!")
 print("="*80)
-
-================================================================================
-END OF SCRIPT
-================================================================================
-
-QUICK REFERENCE - HOW TO USE:
-1. Copy everything from "# MTG METAGAME ANALYSIS" to the last print statement
-2. Paste into Google Colab
-3. Press Ctrl+F9 or Runtime → Run All
-4. Upload your Excel file
-5. (Optional) Upload your CSV history
-6. Enter player count (default 1000)
-7. Wait for analysis to complete
-8. Download ZIP with all results
-
-For detailed documentation, see README.md in the repository.
