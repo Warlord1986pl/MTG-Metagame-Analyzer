@@ -5,19 +5,20 @@ A comprehensive Python tool for analyzing Magic: The Gathering metagame data, ge
 ## Features
 
 - **Encounter Probability Analysis**: Calculate the probability of facing specific decks in tournaments
-- **Meta Trend Tracking**: Monitor how deck metagame percentages change over weeks
+- **Meta Trend Tracking**: Monitor how deck and archetype metagame percentages change over weeks
 - **Archetype Aggregation**: Group decks by archetype for broader analysis
 - **Performance Metrics**: Identify underplayed winners and popular traps
 - **Prep Priority Scoring**: Automatically rank decks by preparation importance
 - **Interactive Visualizations**: Generate publication-ready charts with matplotlib
 - **Historical Data Management**: Track metagame evolution with optional CSV history files
+- **Dual-Level Analysis**: Separate trend tracking for both decks AND archetypes
 
 ## Quick Start
 
 ### Option 1: Google Colab (Recommended for non-technical users)
 
 1. Open [Google Colab](https://colab.research.google.com)
-2. Copy the entire content from `src/mtg_analyzer.py`
+2. Copy the entire content from `docs/SCRIPT_FULL.txt` (or `src/mtg_analyzer.py`)
 3. Paste it into a new Colab notebook
 4. Click **Runtime** → **Run all** (or press Ctrl+F9)
 5. Upload your Excel file when prompted
@@ -65,16 +66,17 @@ The script generates:
 1. **deck_analysis_W{N}.xlsx** - Detailed deck metrics for week N
 2. **deck_analysis_ARCHETYPE_W{N}.xlsx** - Archetype-level aggregation
 3. **Metagame_History_W{N}.csv** - Updated history file (use as input next week)
-4. **encounter_prob_Deck_W{N}.png** - Bar chart of encounter probabilities
-5. **encounter_prob_Archetype_W{N}.png** - Archetype encounter chart
-6. **meta_trend_Deck_W{N}_last{X}w.png** - Trend chart (if history available)
+4. **encounter_prob_Deck_W{N}.png** - Bar chart of encounter probabilities (by deck)
+5. **encounter_prob_Archetype_W{N}.png** - Bar chart of encounter probabilities (by archetype)
+6. **meta_trend_Deck_W{N}_last{X}w.png** - Trend line chart for top 10 decks (if history available)
+7. **meta_trend_Archetype_W{N}_last{X}w.png** - Trend line chart for archetypes (if history available)
 
 All files are packaged in `MTG_Analysis_W{N}.zip`
 
 ## Calculations Explained
 
 ### Encounter Probability
-Uses hypergeometric distribution to calculate the probability of facing a specific deck in a {N}-player tournament:
+Uses hypergeometric distribution to calculate the probability of facing a specific deck in an N-player tournament:
 
 - **N**: Total estimated tournament players
 - **K**: Number of players piloting the deck
@@ -120,6 +122,19 @@ Default: 1,000 players (typical large tournament). Adjust based on your specific
 
 Lower counts = higher encounter probabilities
 
+## History Management
+
+**First run (no history):**
+1. Upload only Excel file
+2. Script outputs `Metagame_History_W1.csv`
+3. Charts generated: 2 encounter probability charts only
+
+**Subsequent runs (with history):**
+1. Upload current Excel file
+2. Upload previous `Metagame_History_W{N}.csv`
+3. Script will prompt: "How many weeks back for trend chart? (default 4)"
+4. Outputs: 4 charts (2 encounter probability + 2 trend charts for decks & archetypes)
+
 ## Troubleshooting
 
 **Issue**: "Excel file not found"
@@ -130,14 +145,21 @@ Lower counts = higher encounter probabilities
 - Verify your Excel file has required columns: `Deck`, `Meta`, `Winrate`
 - Check column names match exactly (case-sensitive)
 
-**Issue**: Trend chart not generated
+**Issue**: Trend charts not generated or show only single points
 - Requires at least 2 weeks of history
 - Ensure CSV file has `WeekIndex` column
 - Check that deck names match between current and historical data
+- **v1.3 FIX**: Tab characters in Excel deck names now auto-cleaned
+- If upgrading from pre-v1.3, re-generate history CSV to clean old deck names
 
 **Issue**: Empty squares in legend
 - Fixed in v1.1+ - update your script
 - Deck symbols (□■▪•) are automatically cleaned in display names
+
+**Issue**: Archetype trend chart missing
+- Ensure Excel file includes `Archetype` column
+- If no `Archetype` column, all decks assigned to "Rogue"
+- Chart still generates but with single "Rogue" archetype
 
 ## Contributing
 
@@ -146,35 +168,38 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
 - Suggesting features
 - Submitting pull requests
 
+## Version History
+
+### v1.3 (Current - February 2026)
+- **FIXED**: Deck trend chart now displays multi-week trend lines correctly
+- **FIXED**: Filter order bug that excluded historical data for decks with changing rankings
+- **FIXED**: Tab character handling in Excel deck names (auto-cleanup with `.str.strip()`)
+- **IMPROVED**: Week range filtering now happens BEFORE deck selection filtering
+- **IMPROVED**: Archetype-level records properly excluded from deck trend calculations
+- Trend charts now show complete 4-week history for all top 10 decks
+- Enhanced backward compatibility for data without `Level` column
+
+### v1.2
+- **NEW**: Archetype trend chart (4th visualization)
+- **NEW**: Archetype history tracking in CSV
+- **IMPROVED**: Better separation of deck vs archetype analysis
+- Added `Level` column to history CSV to distinguish deck/archetype entries
+
+### v1.1
+- Fixed legend marker inconsistencies (empty squares)
+- Fixed colormap reversal in trend charts
+- Improved chart layout and legend positioning
+
+### v1.0
+- Initial release
+- Encounter probability analysis
+- Deck trend tracking
+- Basic archetype aggregation
+
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
-
-## Changelog
-
-### Version 1.1
-- Fixed legend marker display (empty squares issue)
-- Reversed colormap ordering for better visual hierarchy
-- Added ASCII trend symbols (^ v -) for better compatibility
-- Improved deck name cleaning (removes special symbols)
-
-### Version 1.0
-- Initial release
-- Core analysis features
-- Google Colab integration
-
-## Support
-
-For questions or issues:
-1. Check the [Troubleshooting](#troubleshooting) section
-2. Review `examples/` for sample data
-3. Open an issue on GitHub
-
-## Author
-
-Created for competitive Magic: The Gathering players and meta analysts.
+MIT License - see LICENSE file for details
 
 ---
 
-**Last Updated**: February 4, 2026  
-**Latest Version**: 1.1
+**For detailed technical documentation**, see [DESCRIPTION.txt](docs/DESCRIPTION.txt)

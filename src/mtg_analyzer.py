@@ -1,4 +1,4 @@
-# MTG METAGAME ANALYSIS - GOOGLE COLAB
+# MTG METAGAME ANALYSIS v1.3 - GOOGLE COLAB
 # =====================================
 # INSTRUCTIONS:
 # 1. Open Google Colab: colab.research.google.com
@@ -81,7 +81,13 @@ TREND_COLORS = {
 def aggregate_by_archetype(df_results):
     """Aggregate deck data by archetype"""
     df = df_results.copy()
-    df['Archetype'] = df.get('Archetype', pd.Series()).fillna('Rogue')
+    # Handle both NaN and pd.NA for Archetype column
+    if 'Archetype' not in df.columns:
+        df['Archetype'] = 'Rogue'
+    else:
+        # Replace both NaN and pd.NA with 'Rogue'
+        df['Archetype'] = df['Archetype'].fillna('Rogue').astype(str).replace('<NA>', 'Rogue')
+    
     df_arch = (
         df
         .groupby('Archetype', dropna=False)
@@ -93,7 +99,10 @@ def aggregate_by_archetype(df_results):
         }))
         .reset_index()
     )
-    df_arch['Deck Display Name'] = df_arch['Archetype']
+    # Ensure 'Archetype' column exists and 'Deck Display Name' is set
+    if 'Archetype' not in df_arch.columns:
+        df_arch['Archetype'] = df_arch.index.astype(str)
+    df_arch['Deck Display Name'] = df_arch['Archetype'].astype(str)
     return df_arch
 
 def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
@@ -191,7 +200,12 @@ def create_encounter_probability_chart(df_results, week_num, N_players, chart_ty
 
 def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
     """Calculate deck trend status"""
-    deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
+    # Filter by deck name AND exclude archetype-level records
+    if 'Level' in df_history.columns:
+        mask = (df_history['Deck'] == deck_name) & ((df_history['Level'] == 'Deck') | (df_history['Level'].isna()))
+        deck_history = df_history[mask].sort_values('WeekIndex')
+    else:
+        deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
     
     if len(deck_history) < 2:
         return 'Stable', TREND_COLORS['Stable']
@@ -219,17 +233,65 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
         print("ℹ No history data available for trend chart")
         return None
     
-    selected_decks = df_results.nlargest(10, 'Meta')['Deck'].tolist()
-    deck_display_names = df_results.nlargest(10, 'Meta').set_index('Deck')['Deck Display Name'].to_dict()
+    # For Archetype chart, try 'Archetype' column first, then 'Deck'
+    key_column = None
+    display_column = None
+    
+    if chart_type == "Archetype":
+        if 'Archetype' in df_results.columns:
+            key_column = 'Archetype'
+            display_column = 'Archetype'
+        elif 'Deck' in df_results.columns:
+            key_column = 'Deck'
+            display_column = 'Deck'
+    else:
+        if 'Deck' in df_results.columns:
+            key_column = 'Deck'
+            display_column = 'Deck Display Name' if 'Deck Display Name' in df_results.columns else 'Deck'
+    
+    if key_column is None or key_column not in df_results.columns:
+        print(f"ℹ Required column not found for {chart_type} chart")
+        return None
+    
+    selected_decks = df_results.nlargest(10, 'Meta')[key_column].tolist()
+    
+    # Build display names dictionary
+    if display_column in df_results.columns and key_column != display_column:
+        # Different columns: map key_column to display_column
+        deck_display_names = df_results.nlargest(10, 'Meta').set_index(key_column)[display_column].to_dict()
+    else:
+        # Same column or display_column doesn't exist: use key_column values as-is
+        deck_display_names = {d: str(d) for d in selected_decks}
     
     if not selected_decks:
         print("ℹ No decks available for trend chart")
         return None
     
-    df_trend = df_history[df_history['Deck'].isin(selected_decks)].copy()
-    max_week = df_trend['WeekIndex'].max()
+    # Filter history by the correct Level type first
+    if chart_type == "Archetype":
+        # For archetypes, explicitly filter by Level == 'Archetype'
+        df_level_filtered = df_history[df_history['Level'] == 'Archetype'].copy()
+    else:
+        # For decks, include rows where Level == 'Deck' OR Level is missing/NaN (backward compatibility)
+        if 'Level' in df_history.columns:
+            mask_deck = (df_history['Level'] == 'Deck') | (df_history['Level'].isna())
+            df_level_filtered = df_history[mask_deck].copy()
+        else:
+            # No Level column at all - assume all are decks
+            df_level_filtered = df_history.copy()
+    
+    # Get week range BEFORE filtering by selected decks
+    if 'WeekIndex' not in df_level_filtered.columns or len(df_level_filtered) == 0:
+        print(f"ℹ No history data available for {chart_type} trend chart")
+        return None
+    
+    max_week = df_level_filtered['WeekIndex'].max()
     min_week = max(1, max_week - weeks_back + 1)
-    df_trend = df_trend[(df_trend['WeekIndex'] >= min_week) & (df_trend['WeekIndex'] <= max_week)]
+    df_week_filtered = df_level_filtered[(df_level_filtered['WeekIndex'] >= min_week) & (df_level_filtered['WeekIndex'] <= max_week)].copy()
+    
+    # NOW select top 10 decks from the current week (for legend/display)
+    # But include ALL their historical data from the week range
+    df_trend = df_week_filtered[df_week_filtered['Deck'].isin(selected_decks)].copy()
     
     if len(df_trend) == 0:
         print(f"ℹ No trend data for last {weeks_back} weeks")
@@ -296,6 +358,10 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     except Exception as e:
         print(f"Error reading Excel file: {e}")
         raise
+
+    # Clean deck names immediately to remove tabs and whitespace
+    if 'Deck' in df_new.columns:
+        df_new['Deck'] = df_new['Deck'].astype(str).str.strip()
 
     if 'My Winrate' not in df_new.columns:
         df_new['My Winrate'] = pd.NA
@@ -377,6 +443,24 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
         df_history = df_history[~mask_dup]
     df_history = pd.concat([df_history, df_new], ignore_index=True)
 
+    # Add archetypes to history
+    df_arch_for_history = aggregate_by_archetype(df_new)
+    df_arch_for_history = calculate_archetype_metrics(df_arch_for_history, total_players)
+    df_arch_for_history['Level'] = 'Archetype'
+    df_arch_for_history['Deck'] = df_arch_for_history['Archetype']
+    df_arch_for_history['WeekIndex'] = this_week_idx
+    df_arch_for_history['Trend Label'] = 'Stable'
+    df_arch_for_history['Pillar'] = False
+    df_arch_for_history['Emerging Threat'] = False
+    df_arch_for_history['Declining Threat'] = False
+    
+    # Remove old archetype entries for this week if they exist
+    if len(df_history) > 0 and 'Level' in df_history.columns:
+        mask_arch_dup = (df_history['WeekIndex'] == this_week_idx) & (df_history['Level'] == 'Archetype')
+        df_history = df_history[~mask_arch_dup]
+    
+    df_history = pd.concat([df_history, df_arch_for_history], ignore_index=True)
+
     print("✅ Analysis complete!")
     return df_new, df_history, this_week_idx, total_players
 
@@ -439,15 +523,9 @@ arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, ch
 print("\n📊 Generating deck charts...")
 deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck")
 
-# Prepare data for export
-df_arch['Level'] = 'Archetype'
-df_arch['Deck'] = df_arch['Archetype']
-
-arch_cols_to_keep = ['Archetype', 'Meta', 'Winrate', 'My Winrate', 'WeekIndex', 'Importance', 
-                     'Quartile', 'Prep Priority', 'Performance Label', 'Level', 'Deck']
-df_arch_for_history = df_arch[[col for col in arch_cols_to_keep if col in df_arch.columns]].copy()
-
-df_history_combined = pd.concat([df_history, df_arch_for_history], ignore_index=True)
+# df_history already contains both decks and archetypes (added in analyze_metagame)
+# No need to add archetypes again - use df_history directly
+df_history_combined = df_history.copy()
 
 # Save files
 excel_out = f'deck_analysis_W{week_num}.xlsx'
@@ -474,6 +552,15 @@ if unique_weeks > 1:
     print(f"\n📊 Generating trend chart (last {weeks_back} weeks)...")
     trend_chart = create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck")
     
+    # Generate archetype trend chart
+    print(f"📊 Generating archetype trend chart (last {weeks_back} weeks)...")
+    df_arch_for_trends = df_history[df_history['Level'] == 'Archetype'].copy() if 'Level' in df_history.columns else pd.DataFrame()
+    if len(df_arch_for_trends) > 0:
+        arch_trend_chart = create_trend_chart(df_history, df_arch, weeks_back, week_num, chart_type="Archetype")
+    else:
+        print("ℹ No archetype history available for trend chart")
+        arch_trend_chart = None
+    
     df_results['Trend Status'] = df_results['Deck'].apply(
         lambda d: calculate_deck_trend_status(df_history, d, weeks_back)[0]
     )
@@ -483,6 +570,8 @@ if unique_weeks > 1:
     print(f"💾 Saved: {excel_out_trend}")
 else:
     print("\nℹ Trend chart requires at least 2 weeks of history")
+    trend_chart = None
+    arch_trend_chart = None
 
 # Show top decks
 print("\n📊 TOP Very High Prep Priority Decks:")
@@ -498,6 +587,9 @@ print("\n📦 Preparing files for download...")
 outputs = [excel_out, csv_out, arch_excel_out, arch_chart, deck_chart]
 if trend_chart:
     outputs.append(trend_chart)
+if arch_trend_chart:
+    outputs.append(arch_trend_chart)
+if 'excel_out_trend' in locals():
     outputs.append(excel_out_trend)
 
 existing = [p for p in outputs if os.path.exists(p)]
