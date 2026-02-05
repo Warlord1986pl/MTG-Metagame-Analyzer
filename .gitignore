@@ -49,6 +49,14 @@ encounter_prob_*
 meta_trend_*
 MTG_Analysis_*
 
+# EXCEPTION: Allow example files
+!examples/*.xlsx
+!examples/*.csv
+!examples/*.png
+!examples/outputs/*.xlsx
+!examples/outputs/*.csv
+!examples/outputs/*.png
+
 # User data
 examples/user_data/
 examples/output/

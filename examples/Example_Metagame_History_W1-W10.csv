@@ -1,0 +1,153 @@
+Deck,Meta,Winrate,My Winrate,Archetype,WeekIndex,Deck Display Name,Encounter Copies,Encounter Probability,Importance,Quartile,Prep Priority,Performance Label,Trend Label,Pillar,Emerging Threat,Declining Threat,Level
+Boros Energy,12.5,52.0,54.0,Aggro,1,Boros Energy,154,0.48,0.87,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+Affinity,11.2,53.0,51.0,Aggro,1,Affinity,138,0.44,0.75,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+Jeskai Blink,8.1,49.0,54.0,Midrange,1,Jeskai Blink,100,0.35,0.52,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+Izzet Prowess,6.8,47.5,33.0,Aggro,1,Izzet Prowess,84,0.30,0.38,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Ruby Storm,6.2,51.5,48.0,Combo,1,Ruby Storm,77,0.29,0.48,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+Esper Phelia,4.8,48.0,49.0,Midrange,1,Esper Phelia,59,0.22,0.30,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Domain Aggro,4.5,49.0,50.0,Midrange,1,Domain Aggro,56,0.21,0.32,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Rogue,3.9,50.0,50.0,Rogue,1,Rogue,48,0.18,0.33,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Ramp,3.8,47.0,53.0,Ramp,1,Eldrazi Ramp,47,0.18,0.21,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Amulet Titan,3.6,51.0,58.0,Combo,1,Amulet Titan,44,0.17,0.36,Q3,High Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,30.5,51.95,49.5,Aggro,1,Aggro,376,0.82,0.94,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Archetype
+Combo,19.2,50.8,52.0,Combo,1,Combo,237,0.63,0.66,Q3,High Prep Priority,Neutral,Stable,False,False,False,Archetype
+Control,2.8,46.5,34.0,Control,1,Control,35,0.14,0.07,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Archetype
+Midrange,24.3,49.3,48.5,Midrange,1,Midrange,299,0.74,0.69,Q4,Very High Prep Priority,Popular Trap,Stable,False,False,False,Archetype
+Ramp,7.0,46.8,51.0,Ramp,1,Ramp,86,0.30,0.15,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Archetype
+Boros Energy,13.2,53.0,55.0,Aggro,2,Boros Energy,163,0.51,0.90,Q4,Very High Prep Priority,Neutral,Rising,False,False,False,Deck
+Affinity,10.1,52.5,50.0,Aggro,2,Affinity,125,0.41,0.70,Q3,High Prep Priority,Neutral,Falling,False,False,False,Deck
+Jeskai Blink,7.8,49.5,55.0,Midrange,2,Jeskai Blink,96,0.34,0.51,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Deck
+Izzet Prowess,7.1,48.0,34.0,Aggro,2,Izzet Prowess,88,0.31,0.40,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Ruby Storm,5.9,51.0,49.0,Combo,2,Ruby Storm,73,0.28,0.47,Q4,Very High Prep Priority,Neutral,Falling,False,False,False,Deck
+Murktide Tempo,3.5,52.0,56.0,Aggro,2,Murktide Tempo,43,0.16,0.38,Q3,High Prep Priority,Underplayed Winner,Stable,False,True,False,Deck
+Esper Phelia,4.6,48.0,49.0,Midrange,2,Esper Phelia,57,0.21,0.29,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Domain Aggro,4.2,49.5,50.0,Midrange,2,Domain Aggro,52,0.19,0.31,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Rogue,3.7,50.0,50.0,Rogue,2,Rogue,46,0.17,0.32,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+Eldrazi Ramp,3.4,46.5,53.0,Ramp,2,Eldrazi Ramp,42,0.16,0.19,Q1,Low Prep Priority,Popular Trap,Falling,False,False,False,Deck
+Amulet Titan,3.3,50.5,58.0,Combo,2,Amulet Titan,41,0.16,0.34,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Deck
+Aggro,30.4,52.45,50.0,Aggro,2,Aggro,375,0.82,0.93,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Archetype
+Combo,19.0,50.6,52.0,Combo,2,Combo,235,0.62,0.65,Q3,High Prep Priority,Neutral,Stable,False,False,False,Archetype
+Control,2.7,46.3,34.0,Control,2,Control,33,0.13,0.06,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Archetype
+Midrange,24.8,49.4,48.5,Midrange,2,Midrange,306,0.76,0.71,Q4,Very High Prep Priority,Popular Trap,Stable,False,False,False,Archetype
+Ramp,6.8,46.7,51.0,Ramp,2,Ramp,84,0.29,0.14,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Boros Energy,14.5,54.0,56.0,Aggro,3,Boros Energy,179,0.55,0.95,Q4,Very High Prep Priority,Neutral,Rising,False,False,False,Deck
+Affinity,8.9,51.5,49.0,Aggro,3,Affinity,110,0.38,0.62,Q3,High Prep Priority,Neutral,Falling,False,False,False,Deck
+Jeskai Blink,7.5,50.0,55.0,Midrange,3,Jeskai Blink,93,0.33,0.50,Q3,High Prep Priority,Neutral,Falling,False,False,False,Deck
+Izzet Prowess,7.3,47.5,34.0,Aggro,3,Izzet Prowess,90,0.32,0.39,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Murktide Tempo,5.8,52.5,57.0,Aggro,3,Murktide Tempo,72,0.27,0.44,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Ruby Storm,5.2,50.5,48.0,Combo,3,Ruby Storm,64,0.25,0.43,Q3,High Prep Priority,Neutral,Falling,False,False,False,Deck
+Esper Phelia,4.4,47.5,49.0,Midrange,3,Esper Phelia,54,0.20,0.28,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Domain Aggro,4.0,50.0,50.0,Midrange,3,Domain Aggro,49,0.18,0.30,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Grixis Reanimator,3.6,48.0,46.0,Midrange,3,Grixis Reanimator,44,0.17,0.22,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Rogue,3.3,50.0,50.0,Rogue,3,Rogue,41,0.16,0.29,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Deck
+Aggro,31.6,52.75,50.5,Aggro,3,Aggro,390,0.85,0.96,Q4,Very High Prep Priority,Neutral,Stable,False,False,False,Archetype
+Combo,18.5,50.4,51.5,Combo,3,Combo,228,0.60,0.63,Q3,High Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.5,46.0,34.0,Control,3,Control,31,0.12,0.05,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,23.4,49.5,48.5,Midrange,3,Midrange,289,0.72,0.68,Q4,Very High Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,6.5,46.5,51.5,Ramp,3,Ramp,80,0.28,0.13,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Boros Energy,15.2,54.5,56.0,Aggro,4,Boros Energy,188,0.57,0.98,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Affinity,8.2,50.5,48.0,Aggro,4,Affinity,101,0.35,0.56,Q3,High Prep Priority,Neutral,Falling,False,False,False,Deck
+Murktide Tempo,7.1,53.0,58.0,Aggro,4,Murktide Tempo,88,0.31,0.48,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Jeskai Blink,6.8,50.0,55.0,Midrange,4,Jeskai Blink,84,0.30,0.48,Q4,Very High Prep Priority,Neutral,Falling,False,False,True,Deck
+Izzet Prowess,7.0,47.0,34.0,Aggro,4,Izzet Prowess,86,0.31,0.38,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Ruby Storm,4.9,50.5,48.0,Combo,4,Ruby Storm,60,0.24,0.41,Q3,High Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,4.3,47.5,49.0,Midrange,4,Esper Phelia,53,0.20,0.27,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Domain Aggro,3.8,50.0,50.0,Midrange,4,Domain Aggro,47,0.17,0.29,Q1,Low Prep Priority,Popular Trap,Falling,False,False,True,Deck
+Grixis Reanimator,3.5,48.0,46.0,Midrange,4,Grixis Reanimator,43,0.16,0.21,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Rogue,3.2,50.0,50.0,Rogue,4,Rogue,39,0.15,0.28,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Amulet Titan,3.0,51.0,58.0,Combo,4,Amulet Titan,37,0.14,0.32,Q2,Medium Prep Priority,Neutral,Stable,False,False,False,Deck
+Aggro,32.5,53.4,51.0,Aggro,4,Aggro,401,0.87,0.97,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,17.8,50.3,51.0,Combo,4,Combo,219,0.58,0.61,Q3,High Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.4,45.5,34.0,Control,4,Control,30,0.12,0.04,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,22.9,49.5,48.5,Midrange,4,Midrange,282,0.70,0.66,Q3,High Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,6.2,46.5,51.5,Ramp,4,Ramp,77,0.27,0.12,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Boros Energy,15.9,55.0,56.0,Aggro,5,Boros Energy,196,0.59,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,8.4,53.5,58.0,Aggro,5,Murktide Tempo,104,0.38,0.53,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Affinity,7.1,49.5,47.0,Aggro,5,Affinity,88,0.31,0.50,Q3,High Prep Priority,Neutral,Falling,False,False,True,Deck
+Izzet Prowess,7.2,47.0,34.0,Aggro,5,Izzet Prowess,89,0.32,0.39,Q2,Medium Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Jeskai Blink,6.2,50.0,55.0,Midrange,5,Jeskai Blink,76,0.29,0.45,Q3,High Prep Priority,Neutral,Falling,False,False,True,Deck
+Ruby Storm,4.5,50.0,48.0,Combo,5,Ruby Storm,55,0.22,0.39,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,4.1,47.5,49.0,Midrange,5,Esper Phelia,50,0.19,0.26,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Grixis Reanimator,3.4,48.0,46.0,Midrange,5,Grixis Reanimator,42,0.16,0.21,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Domain Aggro,3.2,50.0,50.0,Midrange,5,Domain Aggro,39,0.15,0.28,Q1,Low Prep Priority,Popular Trap,Falling,False,False,True,Deck
+Amulet Titan,2.8,51.0,58.0,Combo,5,Amulet Titan,35,0.13,0.30,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,33.4,53.8,51.5,Aggro,5,Aggro,412,0.89,0.98,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,17.2,49.8,50.5,Combo,5,Combo,212,0.56,0.59,Q3,High Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.3,45.0,34.0,Control,5,Control,28,0.11,0.03,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,22.2,49.5,48.5,Midrange,5,Midrange,274,0.68,0.64,Q3,High Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,6.1,46.5,51.5,Ramp,5,Ramp,75,0.27,0.12,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Archetype
+Boros Energy,16.5,55.0,56.0,Aggro,6,Boros Energy,204,0.61,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,9.2,54.0,59.0,Aggro,6,Murktide Tempo,114,0.41,0.57,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Izzet Prowess,7.5,47.0,34.0,Aggro,6,Izzet Prowess,92,0.33,0.40,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Affinity,5.8,48.5,46.0,Aggro,6,Affinity,72,0.27,0.43,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Jeskai Blink,5.5,50.0,55.0,Midrange,6,Jeskai Blink,68,0.26,0.42,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Ruby Storm,4.1,49.5,48.0,Combo,6,Ruby Storm,50,0.19,0.36,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,3.9,47.5,49.0,Midrange,6,Esper Phelia,48,0.18,0.25,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Grixis Reanimator,3.2,48.0,46.0,Midrange,6,Grixis Reanimator,40,0.15,0.20,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Izzet Tempo,2.9,51.5,52.0,Aggro,6,Izzet Tempo,36,0.14,0.34,Q1,Low Prep Priority,Underplayed Winner,Stable,False,True,False,Deck
+Amulet Titan,2.6,51.0,58.0,Combo,6,Amulet Titan,32,0.12,0.28,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,34.6,54.3,52.5,Aggro,6,Aggro,427,0.90,0.99,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,16.8,49.5,50.0,Combo,6,Combo,207,0.54,0.57,Q3,High Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.2,44.5,34.0,Control,6,Control,27,0.10,0.03,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,21.3,49.5,48.5,Midrange,6,Midrange,263,0.65,0.61,Q2,Medium Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,6.0,46.5,51.5,Ramp,6,Ramp,74,0.26,0.12,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Archetype
+Boros Energy,17.1,55.0,56.0,Aggro,7,Boros Energy,211,0.62,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,10.1,54.0,59.0,Aggro,7,Murktide Tempo,124,0.44,0.60,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Izzet Prowess,7.8,47.0,34.0,Aggro,7,Izzet Prowess,96,0.34,0.41,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Izzet Tempo,4.2,52.0,52.0,Aggro,7,Izzet Tempo,52,0.20,0.36,Q2,Medium Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Affinity,4.9,48.0,45.0,Aggro,7,Affinity,61,0.24,0.39,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Jeskai Blink,5.0,50.0,55.0,Midrange,7,Jeskai Blink,62,0.24,0.40,Q2,Medium Prep Priority,Neutral,Falling,False,False,True,Deck
+Ruby Storm,3.8,49.0,48.0,Combo,7,Ruby Storm,47,0.18,0.34,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,3.7,47.5,49.0,Midrange,7,Esper Phelia,46,0.17,0.24,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Grixis Reanimator,3.0,48.0,46.0,Midrange,7,Grixis Reanimator,37,0.14,0.19,Q1,Low Prep Priority,Neutral,Stable,False,False,False,Deck
+Amulet Titan,2.4,50.5,58.0,Combo,7,Amulet Titan,30,0.11,0.26,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,36.0,54.5,53.0,Aggro,7,Aggro,444,0.91,1.00,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,16.2,49.0,49.5,Combo,7,Combo,200,0.52,0.55,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.1,44.0,34.0,Control,7,Control,26,0.10,0.02,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,20.4,49.5,48.5,Midrange,7,Midrange,252,0.62,0.58,Q2,Medium Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,5.8,46.5,51.5,Ramp,7,Ramp,72,0.26,0.11,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Archetype
+Boros Energy,17.5,55.0,56.0,Aggro,8,Boros Energy,216,0.63,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,11.2,54.0,59.0,Aggro,8,Murktide Tempo,138,0.47,0.63,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Izzet Prowess,7.9,47.0,34.0,Aggro,8,Izzet Prowess,97,0.34,0.41,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Izzet Tempo,5.1,52.0,52.0,Aggro,8,Izzet Tempo,63,0.24,0.39,Q3,High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Affinity,4.1,47.5,44.0,Aggro,8,Affinity,51,0.20,0.35,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Jeskai Blink,4.5,50.0,55.0,Midrange,8,Jeskai Blink,56,0.22,0.38,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Ruby Storm,3.5,48.5,48.0,Combo,8,Ruby Storm,43,0.16,0.31,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,3.5,47.5,49.0,Midrange,8,Esper Phelia,43,0.16,0.23,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Grixis Reanimator,2.8,48.0,46.0,Midrange,8,Grixis Reanimator,34,0.13,0.18,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Amulet Titan,2.2,50.0,58.0,Combo,8,Amulet Titan,27,0.10,0.24,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,36.8,54.5,53.0,Aggro,8,Aggro,454,0.92,1.00,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,15.8,48.5,49.0,Combo,8,Combo,195,0.51,0.53,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,2.0,44.0,34.0,Control,8,Control,25,0.09,0.02,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,19.8,49.5,48.5,Midrange,8,Midrange,244,0.60,0.56,Q2,Medium Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,5.6,46.5,51.5,Ramp,8,Ramp,69,0.25,0.11,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Archetype
+Boros Energy,18.0,55.0,56.0,Aggro,9,Boros Energy,222,0.64,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,12.0,54.0,59.0,Aggro,9,Murktide Tempo,148,0.49,0.65,Q4,Very High Prep Priority,Underplayed Winner,Rising,True,True,False,Deck
+Izzet Prowess,8.0,47.0,34.0,Aggro,9,Izzet Prowess,99,0.35,0.41,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Izzet Tempo,6.2,52.0,52.0,Aggro,9,Izzet Tempo,77,0.29,0.42,Q3,High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Affinity,3.2,47.0,43.0,Aggro,9,Affinity,40,0.15,0.30,Q1,Low Prep Priority,Popular Trap,Falling,False,False,True,Deck
+Jeskai Blink,3.8,50.0,55.0,Midrange,9,Jeskai Blink,47,0.18,0.33,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,3.3,47.5,49.0,Midrange,9,Esper Phelia,41,0.15,0.21,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Ruby Storm,3.1,48.0,48.0,Combo,9,Ruby Storm,38,0.14,0.28,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Grixis Reanimator,2.6,48.0,46.0,Midrange,9,Grixis Reanimator,32,0.12,0.17,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Amulet Titan,2.0,49.5,58.0,Combo,9,Amulet Titan,25,0.09,0.22,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,38.4,54.5,53.5,Aggro,9,Aggro,474,0.93,1.00,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,15.2,47.5,48.5,Combo,9,Combo,188,0.49,0.51,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,1.9,44.0,34.0,Control,9,Control,23,0.09,0.01,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,19.2,49.5,48.5,Midrange,9,Midrange,237,0.58,0.54,Q2,Medium Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,5.4,46.5,51.5,Ramp,9,Ramp,67,0.25,0.10,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Archetype
+Boros Energy,18.5,55.0,56.0,Aggro,10,Boros Energy,228,0.65,1.00,Q4,Very High Prep Priority,Neutral,Rising,True,False,False,Deck
+Murktide Tempo,12.8,54.0,59.0,Aggro,10,Murktide Tempo,158,0.51,0.67,Q4,Very High Prep Priority,Underplayed Winner,Rising,True,True,False,Deck
+Izzet Prowess,8.1,47.0,34.0,Aggro,10,Izzet Prowess,100,0.35,0.42,Q3,High Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Izzet Tempo,6.9,52.0,52.0,Aggro,10,Izzet Tempo,85,0.31,0.43,Q4,Very High Prep Priority,Underplayed Winner,Rising,False,True,False,Deck
+Affinity,2.8,46.5,42.0,Aggro,10,Affinity,35,0.13,0.26,Q1,Low Prep Priority,Popular Trap,Falling,False,False,True,Deck
+Jeskai Blink,3.2,50.0,55.0,Midrange,10,Jeskai Blink,40,0.15,0.28,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Esper Phelia,3.1,47.5,49.0,Midrange,10,Esper Phelia,38,0.14,0.20,Q1,Low Prep Priority,Popular Trap,Stable,False,False,False,Deck
+Ruby Storm,2.9,47.5,48.0,Combo,10,Ruby Storm,36,0.13,0.26,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Grixis Reanimator,2.4,48.0,46.0,Midrange,10,Grixis Reanimator,30,0.11,0.16,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Amulet Titan,1.8,49.0,58.0,Combo,10,Amulet Titan,22,0.08,0.20,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Deck
+Aggro,39.8,54.5,53.5,Aggro,10,Aggro,491,0.94,1.00,Q4,Very High Prep Priority,Neutral,Stable,True,False,False,Archetype
+Combo,14.8,47.0,48.0,Combo,10,Combo,183,0.48,0.49,Q2,Medium Prep Priority,Neutral,Falling,False,False,False,Archetype
+Control,1.8,44.0,34.0,Control,10,Control,22,0.08,0.01,Q1,Low Prep Priority,Neutral,Falling,False,False,False,Archetype
+Midrange,18.6,49.5,48.5,Midrange,10,Midrange,230,0.57,0.52,Q2,Medium Prep Priority,Popular Trap,Falling,False,False,False,Archetype
+Ramp,5.2,46.5,51.5,Ramp,10,Ramp,64,0.24,0.10,Q1,Low Prep Priority,Neutral,Falling,False,False,True,Archetype
