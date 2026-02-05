@@ -98,7 +98,7 @@ FORMULAS:
   - Quartile = Q4/Q3/Q2/Q1 based on Importance percentiles (25%, 50%, 75%)
   - Performance Label = "Underplayed Winner" if Meta < median AND WR > median, etc.
 
-create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck")
+create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=0.05)
 PURPOSE: Generates bar chart showing encounter probabilities
 INPUT: 
   - df_results: DataFrame with Encounter Probability, Prep Priority, Performance Label
@@ -108,6 +108,7 @@ INPUT:
 OUTPUT: PNG file named encounter_prob_{chart_type}_W{week_num}.png
 FEATURES:
   - Sorted descending by probability
+  - Optional minimum encounter probability filter (default 5%) for readability
   - Rainbow gradient coloring (reversed: strongest color = highest probability)
   - Probability % labels on bars (colored by prep priority)
   - Deck names rotated to avoid overlap
@@ -125,13 +126,14 @@ INPUT:
 OUTPUT: PNG file named meta_trend_{chart_type}_W{week_num}_last{weeks_back}w.png
 LOGIC:
   1. Select top 10 by Meta% from df_results
-  2. Filter df_history to only those decks/archetypes
+  2. Filter df_history by Level (Deck vs Archetype)
   3. Limit to date range: [max_week - weeks_back + 1, max_week]
-  4. Plot line for each with marker='o'
-  5. Color each line with rainbow gradient (reversed)
-  6. Add trend symbol (^/v/-) to legend labels using calculate_deck_trend_status()
-  7. Include legend with deck names and trend status
-  8. Add reference box at bottom showing symbol meanings
+  4. Filter to selected top 10 decks/archetypes from step 1
+  5. Plot line for each with marker='o'
+  6. Color each line with rainbow gradient (reversed)
+  7. Add trend symbol (^/v/-) to legend labels using calculate_deck_trend_status()
+  8. Include legend with deck names and trend status
+  9. Add reference box at bottom showing symbol meanings
 
 KEY CALCULATIONS
 ----------------
@@ -194,9 +196,9 @@ TREND CALCULATION (Latest 4 Weeks):
 Compares oldest vs newest data points in lookback window
 
 Formula: Trend Change = Latest Meta% - Oldest Meta%
-- Rising: Change > +0.5% (^ symbol)
-- Falling: Change < -0.5% (v symbol)
-- Stable: -0.5% ≤ Change ≤ +0.5% (- symbol)
+- Rising: Change > +0.5% for decks, > +0.2% for archetypes (^ symbol)
+- Falling: Change < -0.5% for decks, < -0.2% for archetypes (v symbol)
+- Stable: Change within the thresholds above (- symbol)
 
 Example:
   Week 1: 4.2%
@@ -364,7 +366,14 @@ CUSTOMIZE COLORS:
 VERSION HISTORY
 ---------------
 
-v1.2 (Current - February 2026)
+v1.3 (Current - February 2026)
+- FIXED: Deck trend chart now shows full multi-week lines (filter order)
+- FIXED: Tab/whitespace cleanup in deck names
+- IMPROVED: Separate trend thresholds (Deck 0.5%, Archetype 0.2%)
+- NEW: Minimum encounter probability filter (default 5%) for cleaner charts
+- IMPROVED: Archetype records properly excluded from deck trend calculations
+
+v1.2 (February 2026)
 - NEW: 4th visualization - Archetype trend chart
 - NEW: Archetype records stored in history CSV
 - IMPROVED: Level column distinguishes Deck vs Archetype entries

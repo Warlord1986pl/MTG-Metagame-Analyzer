@@ -87,6 +87,7 @@ This folder contains example input data and sample output files to help you unde
 **Encounter Probability**: Likelihood of facing this deck in a tournament
 - Calculated using hypergeometric distribution
 - Based on meta percentage and sample size (default: 5-round tournament)
+- Encounter charts use a minimum probability filter (default 5%) for readability
 
 **Importance Score**: Combined metric (70% meta + 30% win rate)
 - Used to determine prep priority quartile (Q1-Q4)
@@ -98,9 +99,9 @@ This folder contains example input data and sample output files to help you unde
 - **Neutral**: Average performance
 
 **Trend Status** (v1.3):
-- **Rising**: Meta% increased >0.5% over trend period
-- **Falling**: Meta% decreased >0.5% over trend period
-- **Stable**: Change within ±0.5%
+- **Rising**: Meta% increased >0.5% (decks) or >0.2% (archetypes) over trend period
+- **Falling**: Meta% decreased >0.5% (decks) or >0.2% (archetypes) over trend period
+- **Stable**: Change within the thresholds above
 
 ## Contact & Feedback
 

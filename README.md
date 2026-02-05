@@ -5,6 +5,7 @@ A comprehensive Python tool for analyzing Magic: The Gathering metagame data, ge
 ## Features
 
 - **Encounter Probability Analysis**: Calculate the probability of facing specific decks in tournaments
+- **Encounter Threshold Filter**: Hide low-probability decks for cleaner encounter charts
 - **Meta Trend Tracking**: Monitor how deck and archetype metagame percentages change over weeks
 - **Archetype Aggregation**: Group decks by archetype for broader analysis
 - **Performance Metrics**: Identify underplayed winners and popular traps
@@ -101,9 +102,9 @@ Weighted metric combining metagame and performance:
 
 ### Trend Status
 Calculated over last N weeks:
-- **Rising** (^): Meta share increased by >0.5%
-- **Falling** (v): Meta share decreased by >0.5%
-- **Stable** (-): Meta share within ±0.5%
+- **Rising** (^): Meta share increased by >0.5% (decks) or >0.2% (archetypes)
+- **Falling** (v): Meta share decreased by >0.5% (decks) or >0.2% (archetypes)
+- **Stable** (-): Change within the thresholds above
 
 ## Examples
 
@@ -121,6 +122,11 @@ Default: 1,000 players (typical large tournament). Adjust based on your specific
 - **Local events**: 20-100 players
 
 Lower counts = higher encounter probabilities
+
+### Minimum Encounter Probability
+Default: 5% (filters encounter probability charts for readability)
+- Enter a lower value (e.g., 2) to show more decks
+- Enter a higher value (e.g., 8) to focus on the most likely matchups
 
 ## History Management
 
@@ -176,8 +182,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
 - **FIXED**: Tab character handling in Excel deck names (auto-cleanup with `.str.strip()`)
 - **IMPROVED**: Week range filtering now happens BEFORE deck selection filtering
 - **IMPROVED**: Archetype-level records properly excluded from deck trend calculations
+- **NEW**: Minimum encounter probability filter (default 5%) for cleaner charts
+- **IMPROVED**: Separate trend thresholds (decks: 0.5%, archetypes: 0.2%)
 - Trend charts now show complete 4-week history for all top 10 decks
 - Enhanced backward compatibility for data without `Level` column
+
+#### Patch Updates (February 5, 2026)
+- Added a minimum encounter probability filter (default 5%) for encounter charts
+- Separated trend thresholds for decks (0.5%) vs archetypes (0.2%)
+- Archetype trend status now strictly uses archetype-level history rows
 
 ### v1.2
 - **NEW**: Archetype trend chart (4th visualization)

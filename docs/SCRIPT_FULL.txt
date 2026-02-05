@@ -8,14 +8,20 @@
 # 5. Wait for charts and download ZIP results
 # =====================================
 
+# Install packages
 !pip install mplcursors openpyxl -q
 
+# Imports
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import numpy as np
 import sys
+
+# =====================================
+# HELPER FUNCTIONS
+# =====================================
 
 def hypergeometric_probability(N, K, sample_size, threshold=1):
     """Calculate probability of encountering a given deck"""
@@ -52,6 +58,7 @@ def trend_label(current, past_avg, threshold=1.0):
     else:
         return 'Stable'
 
+# Color palettes
 PERFORMANCE_COLORS = {
     'Underplayed Winner': "#b9f03a",
     'Popular Trap': "#f07431",
@@ -70,6 +77,10 @@ TREND_COLORS = {
     'Falling Deck': '#e74c3c',
     'Stable': '#95a5a6'
 }
+
+# Trend thresholds (percentage points)
+TREND_THRESHOLD_DECK = 0.5
+TREND_THRESHOLD_ARCHETYPE = 0.2
 
 def aggregate_by_archetype(df_results):
     """Aggregate deck data by archetype"""
@@ -137,17 +148,23 @@ def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
     df['Performance Label'] = df.apply(perf_label, axis=1)
     return df
 
-def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck"):
+def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=0.05):
     """Create encounter probability bar chart"""
     plt.figure(figsize=(20, 12))
-    df_sorted = df_results.sort_values('Encounter Probability', ascending=False).reset_index(drop=True)
+    # Filter by minimum encounter probability threshold
+    df_filtered = df_results[df_results['Encounter Probability'] >= min_encounter_threshold].copy()
+    if len(df_filtered) == 0:
+        print(f"⚠ No {chart_type.lower()}s with encounter probability >= {min_encounter_threshold:.1%}")
+        df_filtered = df_results.copy()
+    df_sorted = df_filtered.sort_values('Encounter Probability', ascending=False).reset_index(drop=True)
     num_decks = len(df_sorted)
     cmap = plt.cm.rainbow
     bar_colors = cmap(np.linspace(1, 0, num_decks)) if num_decks > 0 else []
     bars = plt.bar(range(num_decks), df_sorted['Encounter Probability'], color=bar_colors, alpha=0.8, edgecolor='black', linewidth=0.5)
 
     plt.ylabel('Encounter Probability', fontsize=14)
-    plt.title(f'Encounter Probability ({chart_type}) (N={N_players}) - Week {week_num}', fontsize=16, pad=20)
+    threshold_text = f' (min. {min_encounter_threshold:.1%})' if min_encounter_threshold > 0 else ''
+    plt.title(f'Encounter Probability ({chart_type}){threshold_text} (N={N_players}) - Week {week_num}', fontsize=16, pad=20)
     plt.ylim(0, 1.05)
 
     for i, (bar, prob, prep, my_wr) in enumerate(zip(bars, df_sorted['Encounter Probability'], df_sorted['Prep Priority'], df_sorted.get('My Winrate', pd.Series([pd.NA]*num_decks)))):
@@ -191,11 +208,14 @@ def create_encounter_probability_chart(df_results, week_num, N_players, chart_ty
         print(f"ℹ {my_wr_count} decks use My Winrate (marked with *)")
     return out_png
 
-def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
-    """Calculate deck trend status"""
-    # Filter by deck name AND exclude archetype-level records
+def calculate_deck_trend_status(df_history, deck_name, weeks_back=4, chart_type="Deck"):
+    """Calculate deck/archetype trend status"""
+    # Filter by deck name with correct Level type
     if 'Level' in df_history.columns:
-        mask = (df_history['Deck'] == deck_name) & ((df_history['Level'] == 'Deck') | (df_history['Level'].isna()))
+        if chart_type == "Archetype":
+            mask = (df_history['Deck'] == deck_name) & (df_history['Level'] == 'Archetype')
+        else:
+            mask = (df_history['Deck'] == deck_name) & ((df_history['Level'] == 'Deck') | (df_history['Level'].isna()))
         deck_history = df_history[mask].sort_values('WeekIndex')
     else:
         deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
@@ -211,7 +231,7 @@ def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
     weeks = recent['WeekIndex'].values
     meta_values = recent['Meta'].values
     trend_change = meta_values[-1] - meta_values[0]
-    threshold = 0.5
+    threshold = TREND_THRESHOLD_ARCHETYPE if chart_type == "Archetype" else TREND_THRESHOLD_DECK
     
     if trend_change > threshold:
         return 'Rising', TREND_COLORS['Rising Deck']
@@ -294,6 +314,7 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     
     cmap = plt.cm.rainbow
     num_decks = len(selected_decks)
+    # Reversed color mapping
     deck_colors = {deck: cmap(1 - i / max(1, num_decks - 1)) for i, deck in enumerate(selected_decks)}
     
     legend_elements = []
@@ -301,8 +322,9 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     for deck in selected_decks:
         deck_data = df_trend[df_trend['Deck'] == deck].sort_values('WeekIndex')
         if len(deck_data) > 0:
-            trend_status, _ = calculate_deck_trend_status(df_history, deck, weeks_back)
+            trend_status, _ = calculate_deck_trend_status(df_history, deck, weeks_back, chart_type=chart_type)
             trend_symbol = '^' if trend_status == 'Rising' else 'v' if trend_status == 'Falling' else '-'
+            # Use cleaned name without symbols
             display_name = deck_display_names.get(deck, deck)
             label = f"{display_name} {trend_symbol}"
             
@@ -310,6 +332,7 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
                     marker='o', linewidth=2.5, markersize=8, 
                     color=deck_colors[deck])
             
+            # Legend with matching markers
             legend_elements.append(
                 Line2D([0], [0], color=deck_colors[deck], linewidth=2.5, 
                        marker='o', markersize=6, label=label)
@@ -433,6 +456,7 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
         df_history = df_history[~mask_dup]
     df_history = pd.concat([df_history, df_new], ignore_index=True)
 
+    # Add archetypes to history
     df_arch_for_history = aggregate_by_archetype(df_new)
     df_arch_for_history = calculate_archetype_metrics(df_arch_for_history, total_players)
     df_arch_for_history['Level'] = 'Archetype'
@@ -443,6 +467,7 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     df_arch_for_history['Emerging Threat'] = False
     df_arch_for_history['Declining Threat'] = False
     
+    # Remove old archetype entries for this week if they exist
     if len(df_history) > 0 and 'Level' in df_history.columns:
         mask_arch_dup = (df_history['WeekIndex'] == this_week_idx) & (df_history['Level'] == 'Archetype')
         df_history = df_history[~mask_arch_dup]
@@ -452,6 +477,10 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     print("✅ Analysis complete!")
     return df_new, df_history, this_week_idx, total_players
 
+# =====================================
+# PROGRAM EXECUTION
+# =====================================
+
 from google.colab import files
 import zipfile
 import os
@@ -460,6 +489,7 @@ print("\n" + "="*80)
 print("MTG METAGAME ANALYSIS - START")
 print("="*80 + "\n")
 
+# Upload Excel file
 print("📁 Upload Excel file (columns: Deck, Meta, Winrate):")
 uploaded = files.upload()
 
@@ -470,6 +500,7 @@ if not uploaded:
 excel_file = list(uploaded.keys())[0]
 print(f"✓ Loaded: {excel_file}\n")
 
+# Upload history file (optional)
 print("📁 (OPTIONAL) Upload CSV history file:")
 print("   If you don't have history, just click 'Cancel' below.\n")
 try:
@@ -482,27 +513,41 @@ except Exception:
     history_csv = None
     print("ℹ Continuing without history\n")
 
+# Player count
 try:
     N_players = int(input("Player count for calculations (default 1000): ").strip() or 1000)
 except Exception:
     N_players = 1000
 
-print(f"\n🔄 Starting analysis (N={N_players} players)...\n")
+# Encounter probability threshold
+try:
+    min_encounter_pct = float(input("Minimum encounter probability to display (default 5): ").strip() or 5)
+    min_encounter_threshold = min_encounter_pct / 100
+except Exception:
+    min_encounter_threshold = 0.05
 
+print(f"\n🔄 Starting analysis (N={N_players} players, min encounter: {min_encounter_threshold:.1%})...\n")
+
+# Run analysis
 df_results, df_history, week_num, N_players = analyze_metagame(excel_file, history_csv, N_players)
 
 print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nunique()} weeks")
 
+# Generate archetype charts
 print("\n📊 Generating archetype charts...")
 df_arch = aggregate_by_archetype(df_results)
 df_arch = calculate_archetype_metrics(df_arch, N_players)
-arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype")
+arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype", min_encounter_threshold=min_encounter_threshold)
 
+# Generate deck charts
 print("\n📊 Generating deck charts...")
-deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck")
+deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=min_encounter_threshold)
 
+# df_history already contains both decks and archetypes (added in analyze_metagame)
+# No need to add archetypes again - use df_history directly
 df_history_combined = df_history.copy()
 
+# Save files
 excel_out = f'deck_analysis_W{week_num}.xlsx'
 csv_out = f'Metagame_History_W{week_num}.csv'
 arch_excel_out = f'deck_analysis_ARCHETYPE_W{week_num}.xlsx'
@@ -513,8 +558,8 @@ df_history_combined.to_csv(csv_out, index=False)
 
 print(f"\n💾 Saved: {excel_out}, {arch_excel_out}, {csv_out}")
 
+# Trend chart (if history available)
 trend_chart = None
-arch_trend_chart = None
 unique_weeks = df_history['WeekIndex'].nunique() if len(df_history) > 0 else 0
 
 if unique_weeks > 1:
@@ -527,6 +572,7 @@ if unique_weeks > 1:
     print(f"\n📊 Generating trend chart (last {weeks_back} weeks)...")
     trend_chart = create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck")
     
+    # Generate archetype trend chart
     print(f"📊 Generating archetype trend chart (last {weeks_back} weeks)...")
     df_arch_for_trends = df_history[df_history['Level'] == 'Archetype'].copy() if 'Level' in df_history.columns else pd.DataFrame()
     if len(df_arch_for_trends) > 0:
@@ -547,6 +593,7 @@ else:
     trend_chart = None
     arch_trend_chart = None
 
+# Show top decks
 print("\n📊 TOP Very High Prep Priority Decks:")
 top_df = df_results[df_results['Prep Priority'] == 'Very High Prep Priority'][
     ['Deck Display Name', 'Meta', 'Winrate', 'Encounter Probability', 'Prep Priority']
@@ -555,6 +602,7 @@ display(top_df)
 
 print(f"\n📈 Encounter probability range (N={N_players}): {df_results['Encounter Probability'].min():.1%} - {df_results['Encounter Probability'].max():.1%}")
 
+# Download all files as ZIP
 print("\n📦 Preparing files for download...")
 outputs = [excel_out, csv_out, arch_excel_out, arch_chart, deck_chart]
 if trend_chart:

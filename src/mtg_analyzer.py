@@ -78,6 +78,10 @@ TREND_COLORS = {
     'Stable': '#95a5a6'
 }
 
+# Trend thresholds (percentage points)
+TREND_THRESHOLD_DECK = 0.5
+TREND_THRESHOLD_ARCHETYPE = 0.2
+
 def aggregate_by_archetype(df_results):
     """Aggregate deck data by archetype"""
     df = df_results.copy()
@@ -144,17 +148,23 @@ def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
     df['Performance Label'] = df.apply(perf_label, axis=1)
     return df
 
-def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck"):
+def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=0.05):
     """Create encounter probability bar chart"""
     plt.figure(figsize=(20, 12))
-    df_sorted = df_results.sort_values('Encounter Probability', ascending=False).reset_index(drop=True)
+    # Filter by minimum encounter probability threshold
+    df_filtered = df_results[df_results['Encounter Probability'] >= min_encounter_threshold].copy()
+    if len(df_filtered) == 0:
+        print(f"⚠ No {chart_type.lower()}s with encounter probability >= {min_encounter_threshold:.1%}")
+        df_filtered = df_results.copy()
+    df_sorted = df_filtered.sort_values('Encounter Probability', ascending=False).reset_index(drop=True)
     num_decks = len(df_sorted)
     cmap = plt.cm.rainbow
     bar_colors = cmap(np.linspace(1, 0, num_decks)) if num_decks > 0 else []
     bars = plt.bar(range(num_decks), df_sorted['Encounter Probability'], color=bar_colors, alpha=0.8, edgecolor='black', linewidth=0.5)
 
     plt.ylabel('Encounter Probability', fontsize=14)
-    plt.title(f'Encounter Probability ({chart_type}) (N={N_players}) - Week {week_num}', fontsize=16, pad=20)
+    threshold_text = f' (min. {min_encounter_threshold:.1%})' if min_encounter_threshold > 0 else ''
+    plt.title(f'Encounter Probability ({chart_type}){threshold_text} (N={N_players}) - Week {week_num}', fontsize=16, pad=20)
     plt.ylim(0, 1.05)
 
     for i, (bar, prob, prep, my_wr) in enumerate(zip(bars, df_sorted['Encounter Probability'], df_sorted['Prep Priority'], df_sorted.get('My Winrate', pd.Series([pd.NA]*num_decks)))):
@@ -198,11 +208,14 @@ def create_encounter_probability_chart(df_results, week_num, N_players, chart_ty
         print(f"ℹ {my_wr_count} decks use My Winrate (marked with *)")
     return out_png
 
-def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
-    """Calculate deck trend status"""
-    # Filter by deck name AND exclude archetype-level records
+def calculate_deck_trend_status(df_history, deck_name, weeks_back=4, chart_type="Deck"):
+    """Calculate deck/archetype trend status"""
+    # Filter by deck name with correct Level type
     if 'Level' in df_history.columns:
-        mask = (df_history['Deck'] == deck_name) & ((df_history['Level'] == 'Deck') | (df_history['Level'].isna()))
+        if chart_type == "Archetype":
+            mask = (df_history['Deck'] == deck_name) & (df_history['Level'] == 'Archetype')
+        else:
+            mask = (df_history['Deck'] == deck_name) & ((df_history['Level'] == 'Deck') | (df_history['Level'].isna()))
         deck_history = df_history[mask].sort_values('WeekIndex')
     else:
         deck_history = df_history[df_history['Deck'] == deck_name].sort_values('WeekIndex')
@@ -218,7 +231,7 @@ def calculate_deck_trend_status(df_history, deck_name, weeks_back=4):
     weeks = recent['WeekIndex'].values
     meta_values = recent['Meta'].values
     trend_change = meta_values[-1] - meta_values[0]
-    threshold = 0.5
+    threshold = TREND_THRESHOLD_ARCHETYPE if chart_type == "Archetype" else TREND_THRESHOLD_DECK
     
     if trend_change > threshold:
         return 'Rising', TREND_COLORS['Rising Deck']
@@ -309,7 +322,7 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     for deck in selected_decks:
         deck_data = df_trend[df_trend['Deck'] == deck].sort_values('WeekIndex')
         if len(deck_data) > 0:
-            trend_status, _ = calculate_deck_trend_status(df_history, deck, weeks_back)
+            trend_status, _ = calculate_deck_trend_status(df_history, deck, weeks_back, chart_type=chart_type)
             trend_symbol = '^' if trend_status == 'Rising' else 'v' if trend_status == 'Falling' else '-'
             # Use cleaned name without symbols
             display_name = deck_display_names.get(deck, deck)
@@ -506,7 +519,14 @@ try:
 except Exception:
     N_players = 1000
 
-print(f"\n🔄 Starting analysis (N={N_players} players)...\n")
+# Encounter probability threshold
+try:
+    min_encounter_pct = float(input("Minimum encounter probability to display (default 5): ").strip() or 5)
+    min_encounter_threshold = min_encounter_pct / 100
+except Exception:
+    min_encounter_threshold = 0.05
+
+print(f"\n🔄 Starting analysis (N={N_players} players, min encounter: {min_encounter_threshold:.1%})...\n")
 
 # Run analysis
 df_results, df_history, week_num, N_players = analyze_metagame(excel_file, history_csv, N_players)
@@ -517,11 +537,11 @@ print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nuni
 print("\n📊 Generating archetype charts...")
 df_arch = aggregate_by_archetype(df_results)
 df_arch = calculate_archetype_metrics(df_arch, N_players)
-arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype")
+arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype", min_encounter_threshold=min_encounter_threshold)
 
 # Generate deck charts
 print("\n📊 Generating deck charts...")
-deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck")
+deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=min_encounter_threshold)
 
 # df_history already contains both decks and archetypes (added in analyze_metagame)
 # No need to add archetypes again - use df_history directly

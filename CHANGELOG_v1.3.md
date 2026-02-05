@@ -8,6 +8,14 @@ Version 1.3 fixes critical bugs in the deck trend chart functionality and improv
 
 ---
 
+## 🔧 Post-Release Updates (February 5, 2026)
+
+- **NEW**: Minimum encounter probability filter (default 5%) for cleaner encounter charts
+- **IMPROVED**: Separate trend thresholds for status labels
+    - **Decks**: 0.5%
+    - **Archetypes**: 0.2%
+- **IMPROVED**: Archetype trend status now strictly uses archetype-level history rows
+
 ## 🐛 Critical Bug Fixes
 
 ### 1. **Deck Trend Chart Fixed** ✅
