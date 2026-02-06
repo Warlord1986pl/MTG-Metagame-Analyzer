@@ -30,6 +30,80 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import numpy as np
 import sys
+import importlib
+import importlib.metadata
+import os
+
+REQUIRED_PACKAGES = {
+    "mplcursors": "0.5.0",
+    "openpyxl": "3.1.5",
+    "pandas": "1.3.0",
+    "matplotlib": "3.4.0",
+    "numpy": "1.21.0",
+}
+
+def check_runtime_requirements():
+    """Return missing and outdated packages based on REQUIRED_PACKAGES."""
+    try:
+        from packaging.version import Version
+    except Exception:
+        Version = None
+
+    missing = []
+    outdated = []
+    for pkg, min_version in REQUIRED_PACKAGES.items():
+        try:
+            current = importlib.metadata.version(pkg)
+        except importlib.metadata.PackageNotFoundError:
+            missing.append(pkg)
+            continue
+
+        if Version is not None and min_version:
+            try:
+                if Version(current) < Version(min_version):
+                    outdated.append((pkg, current, min_version))
+            except Exception:
+                pass
+    return missing, outdated
+
+def offer_install_requirements(missing, outdated):
+    """Offer to install missing/outdated requirements. Return True if ready."""
+    if not missing and not outdated:
+        return True
+
+    print("\n❗ Missing or outdated Python packages detected:")
+    if missing:
+        print("  Missing:", ", ".join(missing))
+    if outdated:
+        print("  Outdated:")
+        for pkg, current, minimum in outdated:
+            print(f"   - {pkg}: {current} (min {minimum})")
+
+    answer = input("Install/upgrade now? [y/N]: ").strip().lower()
+    if answer not in {"y", "yes"}:
+        print("\nPlease install the missing packages and rerun.")
+        return False
+
+    import subprocess
+    install_args = []
+    for pkg in missing:
+        min_version = REQUIRED_PACKAGES.get(pkg)
+        install_args.append(f"{pkg}>={min_version}" if min_version else pkg)
+    for pkg, _, minimum in outdated:
+        install_args.append(f"{pkg}>={minimum}")
+
+    if install_args:
+        subprocess.run([
+            sys.executable, "-m", "pip", "install", *install_args
+        ], check=False)
+
+    missing_after, outdated_after = check_runtime_requirements()
+    if missing_after or outdated_after:
+        print("\n❌ Some requirements are still missing or outdated.")
+        return False
+
+    print("\n✅ Requirements are installed.")
+    return True
 
 # =====================================
 # HELPER FUNCTIONS
@@ -161,7 +235,16 @@ def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
     df['Performance Label'] = df.apply(perf_label, axis=1)
     return df
 
-def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=0.05):
+def show_plot_nonblocking():
+    """Show plots without blocking script execution outside Colab."""
+    if IN_COLAB:
+        plt.show()
+        return
+    plt.show(block=False)
+    plt.pause(0.1)
+    plt.close()
+
+def create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=0.05, output_dir=None):
     """Create encounter probability bar chart"""
     plt.figure(figsize=(20, 12))
     # Filter by minimum encounter probability threshold
@@ -212,9 +295,10 @@ def create_encounter_probability_chart(df_results, week_num, N_players, chart_ty
 
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.45, right=0.85)
-    out_png = f'encounter_prob_{chart_type}_W{week_num}.png'
+    out_dir = output_dir or "."
+    out_png = os.path.join(out_dir, f'encounter_prob_{chart_type}_W{week_num}.png')
     plt.savefig(out_png, dpi=300, bbox_inches='tight', facecolor='white')
-    plt.show()
+    show_plot_nonblocking()
 
     my_wr_count = df_sorted.get('My Winrate', pd.Series()).notna().sum()
     if my_wr_count > 0:
@@ -253,7 +337,7 @@ def calculate_deck_trend_status(df_history, deck_name, weeks_back=4, chart_type=
     else:
         return 'Stable', TREND_COLORS['Stable']
 
-def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck"):
+def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck", output_dir=None):
     """Create trend chart - FIXED (clean legend, reversed colors)"""
     if len(df_history) == 0:
         print("ℹ No history data available for trend chart")
@@ -373,9 +457,10 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.12, right=0.82)
     
-    out_png = f'meta_trend_{chart_type}_W{week_num}_last{weeks_back}w.png'
+    out_dir = output_dir or "."
+    out_png = os.path.join(out_dir, f'meta_trend_{chart_type}_W{week_num}_last{weeks_back}w.png')
     plt.savefig(out_png, dpi=300, bbox_inches='tight', facecolor='white')
-    plt.show()
+    show_plot_nonblocking()
     
     print(f"✅ Trend chart saved: {out_png}")
     return out_png
@@ -531,9 +616,41 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
 import zipfile
 import os
 
+def try_pick_file_dialog(title, filetypes):
+    """Try to open a file picker; return empty string on cancel or failure."""
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        path = filedialog.askopenfilename(title=title, filetypes=filetypes)
+        root.destroy()
+        return path or ""
+    except Exception:
+        return ""
+
+def try_pick_directory_dialog(title):
+    """Try to open a folder picker; return empty string on cancel or failure."""
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        path = filedialog.askdirectory(title=title)
+        root.destroy()
+        return path or ""
+    except Exception:
+        return ""
+
 print("\n" + "="*80)
 print("MTG METAGAME ANALYSIS - START")
 print("="*80 + "\n")
+
+missing_pkgs, outdated_pkgs = check_runtime_requirements()
+if not offer_install_requirements(missing_pkgs, outdated_pkgs):
+    sys.exit(1)
 
 if IN_COLAB:
     from google.colab import files
@@ -561,12 +678,32 @@ if IN_COLAB:
         uploaded_hist = {}
         history_csv = None
         print("ℹ Continuing without history\n")
+    output_dir = os.getcwd()
 else:
-    excel_file = input("Path to Excel file (columns: Deck, Meta, Winrate): ").strip()
+    excel_file = try_pick_file_dialog(
+        "Select Excel file (Deck, Meta, Winrate)",
+        [("Excel files", "*.xlsx *.xls"), ("All files", "*.*")]
+    )
+    if not excel_file:
+        excel_file = input("Path to Excel file (columns: Deck, Meta, Winrate): ").strip()
     if not excel_file:
         print("❌ No file path provided. Exiting.")
         sys.exit(1)
-    history_csv = input("Optional path to history CSV (press Enter to skip): ").strip() or None
+
+    history_csv = try_pick_file_dialog(
+        "Select history CSV (optional)",
+        [("CSV files", "*.csv"), ("All files", "*.*")]
+    )
+    if not history_csv:
+        history_csv = input("Optional path to history CSV (press Enter to skip): ").strip() or None
+
+    output_dir = try_pick_directory_dialog("Select output folder")
+    if not output_dir:
+        output_dir = input("Output folder (press Enter for current): ").strip() or os.getcwd()
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+
+print(f"✓ Output folder: {output_dir}")
 
 # Player count
 try:
@@ -603,20 +740,34 @@ print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nuni
 print("\n📊 Generating archetype charts...")
 df_arch = aggregate_by_archetype(df_results)
 df_arch = calculate_archetype_metrics(df_arch, N_players, sample_size=rounds)
-arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype", min_encounter_threshold=min_encounter_threshold)
+arch_chart = create_encounter_probability_chart(
+    df_arch,
+    week_num,
+    N_players,
+    chart_type="Archetype",
+    min_encounter_threshold=min_encounter_threshold,
+    output_dir=output_dir,
+)
 
 # Generate deck charts
 print("\n📊 Generating deck charts...")
-deck_chart = create_encounter_probability_chart(df_results, week_num, N_players, chart_type="Deck", min_encounter_threshold=min_encounter_threshold)
+deck_chart = create_encounter_probability_chart(
+    df_results,
+    week_num,
+    N_players,
+    chart_type="Deck",
+    min_encounter_threshold=min_encounter_threshold,
+    output_dir=output_dir,
+)
 
 # df_history already contains both decks and archetypes (added in analyze_metagame)
 # No need to add archetypes again - use df_history directly
 df_history_combined = df_history.copy()
 
 # Save files
-excel_out = f'deck_analysis_W{week_num}.xlsx'
-csv_out = f'Metagame_History_W{week_num}.csv'
-arch_excel_out = f'deck_analysis_ARCHETYPE_W{week_num}.xlsx'
+excel_out = os.path.join(output_dir, f'deck_analysis_W{week_num}.xlsx')
+csv_out = os.path.join(output_dir, f'Metagame_History_W{week_num}.csv')
+arch_excel_out = os.path.join(output_dir, f'deck_analysis_ARCHETYPE_W{week_num}.xlsx')
 
 df_results.to_excel(excel_out, index=False)
 df_arch.to_excel(arch_excel_out, index=False)
@@ -636,13 +787,27 @@ if unique_weeks > 1:
         weeks_back = 4
     
     print(f"\n📊 Generating trend chart (last {weeks_back} weeks)...")
-    trend_chart = create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck")
+    trend_chart = create_trend_chart(
+        df_history,
+        df_results,
+        weeks_back,
+        week_num,
+        chart_type="Deck",
+        output_dir=output_dir,
+    )
     
     # Generate archetype trend chart
     print(f"📊 Generating archetype trend chart (last {weeks_back} weeks)...")
     df_arch_for_trends = df_history[df_history['Level'] == 'Archetype'].copy() if 'Level' in df_history.columns else pd.DataFrame()
     if len(df_arch_for_trends) > 0:
-        arch_trend_chart = create_trend_chart(df_history, df_arch, weeks_back, week_num, chart_type="Archetype")
+        arch_trend_chart = create_trend_chart(
+            df_history,
+            df_arch,
+            weeks_back,
+            week_num,
+            chart_type="Archetype",
+            output_dir=output_dir,
+        )
     else:
         print("ℹ No archetype history available for trend chart")
         arch_trend_chart = None
@@ -651,7 +816,7 @@ if unique_weeks > 1:
         lambda d: calculate_deck_trend_status(df_history, d, weeks_back)[0]
     )
     
-    excel_out_trend = f'deck_analysis_WITH_TRENDS_W{week_num}.xlsx'
+    excel_out_trend = os.path.join(output_dir, f'deck_analysis_WITH_TRENDS_W{week_num}.xlsx')
     df_results.to_excel(excel_out_trend, index=False)
     print(f"💾 Saved: {excel_out_trend}")
 else:
@@ -685,14 +850,15 @@ existing = [p for p in outputs if os.path.exists(p)]
 
 if len(existing) > 1:
     zip_name = f'MTG_Analysis_W{week_num}.zip'
-    with zipfile.ZipFile(zip_name, 'w') as zf:
+    zip_path = os.path.join(output_dir, zip_name)
+    with zipfile.ZipFile(zip_path, 'w') as zf:
         for file in existing:
             zf.write(file)
     if IN_COLAB:
-        print(f"✅ Downloading: {zip_name}")
-        files.download(zip_name)
+        print(f"✅ Downloading: {zip_path}")
+        files.download(zip_path)
     else:
-        print(f"✅ Created: {zip_name}")
+        print(f"✅ Created: {zip_path}")
 else:
     for file in existing:
         if IN_COLAB:
