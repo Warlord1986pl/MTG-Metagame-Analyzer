@@ -42,6 +42,9 @@ pip install -r requirements.txt
 ```bash
 python src/mtg_analyzer.py
 ```
+The script will prompt you for:
+- Path to your Excel input file
+- Optional path to a history CSV (press Enter to skip)
 
 ## Input Data Format
 
@@ -55,6 +58,10 @@ Your Excel file must contain these columns:
 | `Winrate` | Win rate as decimal | 0.52 |
 | `Archetype` | (Optional) Deck archetype | "Aggro" |
 | `My Winrate` | (Optional) Your personal win rate | 0.58 |
+
+Accepted numeric formats:
+- Meta: 5.2, 5,2, 5.2%, 5,2%
+- Winrate: 0.52, 52%, 52.0%
 
 ### CSV History File (Optional)
 For trend analysis, provide a CSV with historical data. Same columns as above plus:
@@ -77,12 +84,12 @@ All files are packaged in `MTG_Analysis_W{N}.zip`
 ## Calculations Explained
 
 ### Encounter Probability
-Uses hypergeometric distribution to calculate the probability of facing a specific deck in an N-player tournament:
+Uses hypergeometric distribution to calculate the probability of facing a specific deck in an N-player event:
 
-- **N**: Total estimated tournament players
+- **N**: Total estimated event players
 - **K**: Number of players piloting the deck
-- **Sample**: Your 5 opponents
-- Formula: P(encounter ≥ 1 out of 5 opponents)
+- **Sample**: Number of rounds/opponents you expect to face (default 5)
+- Formula: $P(\text{encounter} \ge 1 \text{ out of sample})$
 
 ### Importance Score
 Weighted metric combining metagame and performance:
@@ -123,6 +130,10 @@ Default: 1,000 players (typical large tournament). Adjust based on your specific
 
 Lower counts = higher encounter probabilities
 
+### Rounds/Opponents
+Default: 5 (typical MTGO league). Change this to match your event length.
+Only affects encounter probability calculations; meta share and trends always use `Meta`.
+
 ### Minimum Encounter Probability
 Default: 5% (filters encounter probability charts for readability)
 - Enter a lower value (e.g., 2) to show more decks
@@ -151,10 +162,15 @@ Default: 5% (filters encounter probability charts for readability)
 - Verify your Excel file has required columns: `Deck`, `Meta`, `Winrate`
 - Check column names match exactly (case-sensitive)
 
+**Issue**: "Meta/Winrate conversion: X rows became NaN"
+- Some values in `Meta` or `Winrate` are not recognized as numbers
+- Use supported formats (see Input Data Format) and avoid extra text
+
 **Issue**: Trend charts not generated or show only single points
 - Requires at least 2 weeks of history
 - Ensure CSV file has `WeekIndex` column
 - Check that deck names match between current and historical data
+- Rounds/opponents only affect encounter probability, not trend/meta calculations
 - **v1.3 FIX**: Tab characters in Excel deck names now auto-cleaned
 - If upgrading from pre-v1.3, re-generate history CSV to clean old deck names
 

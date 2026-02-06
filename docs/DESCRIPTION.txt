@@ -17,6 +17,9 @@ WHAT IT DOES
    - Cleans deck names (removes special symbols like □■▪•)
    - Automatically calculates week index for new data
    - Validates and normalizes input data
+  - Normalizes numeric fields (e.g., 5,2% or 5.2%) and warns if rows become NaN
+  - Meta examples: 5.2, 5,2, 5.2%, 5,2%
+  - Winrate examples: 0.52, 52%, 52.0%
 
 2. STATISTICAL ANALYSIS
    - Calculates hypergeometric probabilities for deck encounters

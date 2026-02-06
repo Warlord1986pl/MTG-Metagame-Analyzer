@@ -8,8 +8,20 @@
 # 5. Wait for charts and download ZIP results
 # =====================================
 
-# Install packages
-!pip install mplcursors openpyxl -q
+# Install packages (Colab only)
+IN_COLAB = False
+try:
+    import google.colab  # type: ignore
+    IN_COLAB = True
+except Exception:
+    IN_COLAB = False
+
+if IN_COLAB:
+    import subprocess
+    import sys as _sys
+    subprocess.run([
+        _sys.executable, "-m", "pip", "install", "-q", "mplcursors", "openpyxl"
+    ], check=False)
 
 # Imports
 import pandas as pd
@@ -113,6 +125,7 @@ def calculate_archetype_metrics(df_arch, total_players, sample_size=5):
     """Calculate metrics for archetypes"""
     df = df_arch.copy()
     df['Encounter Copies'] = (total_players * df['Meta'] / 100).round().astype(int)
+    # sample_size only affects encounter probability, not meta share or trends
     df['Encounter Probability'] = df.apply(
         lambda r: hypergeometric_probability(total_players, int(r['Encounter Copies']), sample_size, 1), axis=1
     )
@@ -283,6 +296,9 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     # Filter history by the correct Level type first
     if chart_type == "Archetype":
         # For archetypes, explicitly filter by Level == 'Archetype'
+        if 'Level' not in df_history.columns:
+            print("ℹ Archetype trend chart requires history with 'Level' column")
+            return None
         df_level_filtered = df_history[df_history['Level'] == 'Archetype'].copy()
     else:
         # For decks, include rows where Level == 'Deck' OR Level is missing/NaN (backward compatibility)
@@ -364,7 +380,7 @@ def create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type=
     print(f"✅ Trend chart saved: {out_png}")
     return out_png
 
-def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1000):
+def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1000, sample_size=5):
     """Main metagame analysis function"""
     try:
         df_new = pd.read_excel(filename_excel)
@@ -375,6 +391,26 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     # Clean deck names immediately to remove tabs and whitespace
     if 'Deck' in df_new.columns:
         df_new['Deck'] = df_new['Deck'].astype(str).str.strip()
+
+    # Normalize numeric inputs (handles commas and percent strings)
+    if 'Meta' in df_new.columns:
+        meta_raw = df_new['Meta'].astype(str)
+        meta_clean = meta_raw.str.replace('%', '', regex=False).str.replace(',', '.', regex=False)
+        df_new['Meta'] = pd.to_numeric(meta_clean, errors='coerce')
+        meta_invalid = df_new['Meta'].isna().sum()
+        if meta_invalid > 0:
+            print(f"⚠ Meta conversion: {meta_invalid} rows became NaN (check input format)")
+    if 'Winrate' in df_new.columns:
+        winrate_raw = df_new['Winrate'].astype(str)
+        winrate_has_pct = winrate_raw.str.contains('%', regex=False)
+        winrate_clean = winrate_raw.str.replace('%', '', regex=False).str.replace(',', '.', regex=False)
+        winrate_num = pd.to_numeric(winrate_clean, errors='coerce')
+        if winrate_has_pct.any() or (pd.notna(winrate_num).any() and winrate_num.max() > 1):
+            winrate_num = winrate_num / 100
+        df_new['Winrate'] = winrate_num
+        winrate_invalid = df_new['Winrate'].isna().sum()
+        if winrate_invalid > 0:
+            print(f"⚠ Winrate conversion: {winrate_invalid} rows became NaN (check input format)")
 
     if 'My Winrate' not in df_new.columns:
         df_new['My Winrate'] = pd.NA
@@ -396,16 +432,22 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     if 'WeekIndex' in df_history.columns:
         df_history['WeekIndex'] = pd.to_numeric(df_history['WeekIndex'], errors='coerce')
 
-    this_week_idx = int(df_history['WeekIndex'].max()) + 1 if (len(df_history) > 0 and 'WeekIndex' in df_history.columns) else 1
+    if len(df_history) > 0 and 'WeekIndex' in df_history.columns:
+        max_week = df_history['WeekIndex'].max()
+        this_week_idx = int(max_week) + 1 if pd.notna(max_week) else 1
+    else:
+        this_week_idx = 1
     print(f"✓ Week: {this_week_idx}")
 
     df_new['WeekIndex'] = this_week_idx
     df_new['Deck Display Name'] = df_new['Deck'].astype(str).str.replace(r'[\[\]□■▪•]', '', regex=True).str.strip()
 
     total_players = total_encounter_players
+    # sample_size influences encounter odds only; meta share and trends use Meta column
+    sample_size = max(1, min(int(sample_size), total_players))
     df_new['Encounter Copies'] = (total_players * df_new['Meta'] / 100).round().astype(int)
     df_new['Encounter Probability'] = df_new.apply(
-        lambda r: hypergeometric_probability(total_players, int(r['Encounter Copies']), 5, 1), axis=1
+        lambda r: hypergeometric_probability(total_players, int(r['Encounter Copies']), sample_size, 1), axis=1
     )
 
     max_meta = df_new['Meta'].max() if pd.notna(df_new['Meta'].max()) and df_new['Meta'].max() > 0 else 1
@@ -436,12 +478,17 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     if len(df_history) > 0 and 'Deck' in df_history.columns:
         df_tmp = df_history.sort_values('WeekIndex').groupby('Deck').tail(4)
         trend_meta = df_tmp.groupby('Deck')['Meta'].mean().to_dict()
-        df_new['Trend Label'] = df_new.apply(lambda r: trend_label(r['Meta'], trend_meta.get(r['Deck'], r['Meta'])), axis=1)
+        df_new['Trend Label'] = df_new.apply(
+            lambda r: trend_label(r['Meta'], trend_meta.get(r['Deck'], r['Meta']), threshold=TREND_THRESHOLD_DECK),
+            axis=1
+        )
     else:
         df_new['Trend Label'] = 'Stable'
 
     def pillar_flag(deck):
         if len(df_history) == 0 or 'Deck' not in df_history.columns:
+            return False
+        if 'Prep Priority' not in df_history.columns:
             return False
         recent = df_history[df_history['Deck'] == deck].sort_values('WeekIndex').tail(3)
         return len(recent) >= 3 and all(recent['Prep Priority'] == 'Very High Prep Priority')
@@ -458,7 +505,7 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
 
     # Add archetypes to history
     df_arch_for_history = aggregate_by_archetype(df_new)
-    df_arch_for_history = calculate_archetype_metrics(df_arch_for_history, total_players)
+    df_arch_for_history = calculate_archetype_metrics(df_arch_for_history, total_players, sample_size=sample_size)
     df_arch_for_history['Level'] = 'Archetype'
     df_arch_for_history['Deck'] = df_arch_for_history['Archetype']
     df_arch_for_history['WeekIndex'] = this_week_idx
@@ -475,13 +522,12 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
     df_history = pd.concat([df_history, df_arch_for_history], ignore_index=True)
 
     print("✅ Analysis complete!")
-    return df_new, df_history, this_week_idx, total_players
+    return df_new, df_history, this_week_idx, total_players, sample_size
 
 # =====================================
 # PROGRAM EXECUTION
 # =====================================
 
-from google.colab import files
 import zipfile
 import os
 
@@ -489,29 +535,38 @@ print("\n" + "="*80)
 print("MTG METAGAME ANALYSIS - START")
 print("="*80 + "\n")
 
-# Upload Excel file
-print("📁 Upload Excel file (columns: Deck, Meta, Winrate):")
-uploaded = files.upload()
+if IN_COLAB:
+    from google.colab import files
 
-if not uploaded:
-    print("❌ No file uploaded. Exiting.")
-    sys.exit(1)
+    # Upload Excel file
+    print("📁 Upload Excel file (columns: Deck, Meta, Winrate):")
+    uploaded = files.upload()
 
-excel_file = list(uploaded.keys())[0]
-print(f"✓ Loaded: {excel_file}\n")
+    if not uploaded:
+        print("❌ No file uploaded. Exiting.")
+        sys.exit(1)
 
-# Upload history file (optional)
-print("📁 (OPTIONAL) Upload CSV history file:")
-print("   If you don't have history, just click 'Cancel' below.\n")
-try:
-    uploaded_hist = files.upload()
-    history_csv = list(uploaded_hist.keys())[0] if uploaded_hist else None
-    if history_csv:
-        print(f"✓ History loaded: {history_csv}\n")
-except Exception:
-    uploaded_hist = {}
-    history_csv = None
-    print("ℹ Continuing without history\n")
+    excel_file = list(uploaded.keys())[0]
+    print(f"✓ Loaded: {excel_file}\n")
+
+    # Upload history file (optional)
+    print("📁 (OPTIONAL) Upload CSV history file:")
+    print("   If you don't have history, just click 'Cancel' below.\n")
+    try:
+        uploaded_hist = files.upload()
+        history_csv = list(uploaded_hist.keys())[0] if uploaded_hist else None
+        if history_csv:
+            print(f"✓ History loaded: {history_csv}\n")
+    except Exception:
+        uploaded_hist = {}
+        history_csv = None
+        print("ℹ Continuing without history\n")
+else:
+    excel_file = input("Path to Excel file (columns: Deck, Meta, Winrate): ").strip()
+    if not excel_file:
+        print("❌ No file path provided. Exiting.")
+        sys.exit(1)
+    history_csv = input("Optional path to history CSV (press Enter to skip): ").strip() or None
 
 # Player count
 try:
@@ -519,24 +574,35 @@ try:
 except Exception:
     N_players = 1000
 
-# Encounter probability threshold
+# Number of rounds/opponents
 try:
-    min_encounter_pct = float(input("Minimum encounter probability to display (default 5): ").strip() or 5)
-    min_encounter_threshold = min_encounter_pct / 100
+    rounds = int(input("How many rounds/opponents? (default 5): ").strip() or 5)
+    rounds = max(1, rounds)
 except Exception:
-    min_encounter_threshold = 0.05
+    rounds = 5
 
-print(f"\n🔄 Starting analysis (N={N_players} players, min encounter: {min_encounter_threshold:.1%})...\n")
+# Encounter probability threshold
+min_encounter_pct = 5.0
+try:
+    min_encounter_pct = float(input("Minimum encounter probability to display (default 5%): ").strip() or 5)
+except Exception:
+    min_encounter_pct = 5.0
+min_encounter_threshold = min_encounter_pct / 100
+
+print(f"\n🔄 Starting analysis (N={N_players} players, rounds={rounds}, min encounter: {min_encounter_pct:g}%)...\n")
+print("ℹ Rounds/opponents only affect encounter probability; meta share and trends use Meta.")
 
 # Run analysis
-df_results, df_history, week_num, N_players = analyze_metagame(excel_file, history_csv, N_players)
+df_results, df_history, week_num, N_players, rounds = analyze_metagame(
+    excel_file, history_csv, N_players, sample_size=rounds
+)
 
 print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nunique()} weeks")
 
 # Generate archetype charts
 print("\n📊 Generating archetype charts...")
 df_arch = aggregate_by_archetype(df_results)
-df_arch = calculate_archetype_metrics(df_arch, N_players)
+df_arch = calculate_archetype_metrics(df_arch, N_players, sample_size=rounds)
 arch_chart = create_encounter_probability_chart(df_arch, week_num, N_players, chart_type="Archetype", min_encounter_threshold=min_encounter_threshold)
 
 # Generate deck charts
@@ -598,7 +664,10 @@ print("\n📊 TOP Very High Prep Priority Decks:")
 top_df = df_results[df_results['Prep Priority'] == 'Very High Prep Priority'][
     ['Deck Display Name', 'Meta', 'Winrate', 'Encounter Probability', 'Prep Priority']
 ].head(10)
-display(top_df)
+if IN_COLAB:
+    display(top_df)
+else:
+    print(top_df.to_string(index=False))
 
 print(f"\n📈 Encounter probability range (N={N_players}): {df_results['Encounter Probability'].min():.1%} - {df_results['Encounter Probability'].max():.1%}")
 
@@ -619,12 +688,18 @@ if len(existing) > 1:
     with zipfile.ZipFile(zip_name, 'w') as zf:
         for file in existing:
             zf.write(file)
-    print(f"✅ Downloading: {zip_name}")
-    files.download(zip_name)
+    if IN_COLAB:
+        print(f"✅ Downloading: {zip_name}")
+        files.download(zip_name)
+    else:
+        print(f"✅ Created: {zip_name}")
 else:
     for file in existing:
-        print(f"✅ Downloading: {file}")
-        files.download(file)
+        if IN_COLAB:
+            print(f"✅ Downloading: {file}")
+            files.download(file)
+        else:
+            print(f"✅ Created: {file}")
 
 print("\n" + "="*80)
 print("✅ ANALYSIS COMPLETED SUCCESSFULLY!")
