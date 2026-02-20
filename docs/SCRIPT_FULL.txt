@@ -1,83 +1,27 @@
-# MTG METAGAME ANALYSIS v1.3 - GOOGLE COLAB
+# MTG METAGAME ANALYSIS v1.4 - GOOGLE COLAB
+# =====================================
+# WHAT'S NEW IN v1.4:
+# - Renamed "My Winrate" -> "My Deck Winrate" in input template
+# - New chart: My Deck Performance (encounter prob colored by your winrate)
+#   Bars sorted by Problem Score = encounter_prob * (1 - my_winrate)
+# - New chart: Record Probability Distribution (binomial model)
+#   Shows P(5-0), P(4-1), P(3-2) etc. for player and all decks
+# - New Excel output: record probabilities per deck
 # =====================================
 # INSTRUCTIONS:
 # 1. Open Google Colab: colab.research.google.com
 # 2. Copy this entire file into Colab
-# 3. Click "Runtime" → "Run all" (or Ctrl+F9)
+# 3. Click "Runtime" -> "Run all" (or Ctrl+F9)
 # 4. Upload your Excel file when prompted
 # 5. Wait for charts and download ZIP results
 # =====================================
-
-# Install packages (Colab only)
-IN_COLAB = False
-try:
-    import google.colab  # type: ignore
-    IN_COLAB = True
-except Exception:
-    IN_COLAB = False
-
-if IN_COLAB:
-    import subprocess
-    import sys as _sys
-    subprocess.run([
-        _sys.executable, "-m", "pip", "install", "-q", "mplcursors", "openpyxl"
-    ], check=False)
-
-# Imports
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-import numpy as np
-import sys
-
-# =====================================
-# HELPER FUNCTIONS
+# INPUT TEMPLATE COLUMNS:
+# Required: Deck, Meta, Winrate
+# Optional: Archetype, My Deck Winrate
+# My Deck Winrate = your personal winrate AGAINST this deck (decimal, e.g. 0.58)
 # =====================================
 
-def hypergeometric_probability(N, K, sample_size, threshold=1):
-    """Calculate probability of encountering a given deck"""
-    from math import comb
-    if N <= 0 or sample_size <= 0 or threshold <= 0:
-        return 0.0
-    sample_size = min(sample_size, N)
-    max_successes = min(K, sample_size)
-    threshold = min(threshold, max_successes)
-    total = comb(N, sample_size)
-    if total == 0:
-        return 0.0
-    prob = 0
-    for k in range(threshold, max_successes + 1):
-        prob += comb(K, k) * comb(N - K, sample_size - k)
-    return prob / total
-
-def prep_priority(quartile):
-    """Determine preparation priority level"""
-    mapping = {
-        'Q4': 'Very High Prep Priority',
-        'Q3': 'High Prep Priority',
-        'Q2': 'Medium Prep Priority',
-        'Q1': 'Low Prep Priority'
-    }
-    return mapping.get(quartile, 'Low Prep Priority')
-
-def trend_label(current, past_avg, threshold=1.0):
-    """Determine deck trend status (Rising/Falling/Stable)"""
-    if current - past_avg > threshold:
-        return 'Rising Deck'
-    elif current - past_avg < -threshold:
-        return 'Falling Deck'
-    else:
-        return 'Stable'
-
-# Color palettes
-PERFORMANCE_COLORS = {
-    'Underplayed Winner': "#b9f03a",
-    'Popular Trap': "#f07431",
-    'Neutral': '#000000'
-}
-
-PREP_PRIORITY_COLORS = {
+...full contents of MTG_Metagame_Analyzer_v1.4.py...
     'Very High Prep Priority': 'red',
     'High Prep Priority': 'orange',
     'Medium Prep Priority': 'blue',

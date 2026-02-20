@@ -107,6 +107,21 @@ def offer_install_requirements(missing, outdated):
 
 # =====================================
 # HELPER FUNCTIONS
+def calculate_binomial_records(winrate, rounds):
+    """
+    Calculate probability of each W-L record over N rounds.
+    Uses binomial distribution: P(W wins) = C(N,W) * p^W * (1-p)^(N-W)
+    Returns dict: {'5-0': 0.33, '4-1': 0.41, ...}
+    """
+    from math import comb
+    winrate = max(0.0, min(1.0, float(winrate)))
+    records = {}
+    for wins in range(rounds + 1):
+        losses = rounds - wins
+        prob = comb(rounds, wins) * (winrate ** wins) * ((1 - winrate) ** losses)
+        records[f"{wins}-{losses}"] = prob
+    return records
+
 # =====================================
 
 def hypergeometric_probability(N, K, sample_size, threshold=1):
@@ -184,12 +199,13 @@ def aggregate_by_archetype(df_results):
         .apply(lambda g: pd.Series({
             'Meta': g['Meta'].sum(),
             'Winrate': np.average(g['Winrate'], weights=g['Meta']) if g['Meta'].sum() > 0 else np.nan,
-            'My Winrate': (np.average(g['My Winrate'].dropna(), weights=g.loc[g['My Winrate'].notna(), 'Meta'])
-                           if g['My Winrate'].notna().any() else pd.NA)
+            'My Deck Winrate': (
+                np.average(g['My Deck Winrate'].dropna(), weights=g.loc[g['My Deck Winrate'].notna(), 'Meta'])
+                if 'My Deck Winrate' in g.columns and g['My Deck Winrate'].notna().any() else pd.NA
+            )
         }))
         .reset_index()
     )
-    # Ensure 'Archetype' column exists and 'Deck Display Name' is set
     if 'Archetype' not in df_arch.columns:
         df_arch['Archetype'] = df_arch.index.astype(str)
     df_arch['Deck Display Name'] = df_arch['Archetype'].astype(str)
@@ -497,8 +513,28 @@ def analyze_metagame(filename_excel, history_csv=None, total_encounter_players=1
         if winrate_invalid > 0:
             print(f"⚠ Winrate conversion: {winrate_invalid} rows became NaN (check input format)")
 
-    if 'My Winrate' not in df_new.columns:
-        df_new['My Winrate'] = pd.NA
+    # Normalize My Deck Winrate (v1.4: renamed from My Winrate)
+    if 'My Deck Winrate' in df_new.columns:
+        my_wr_raw = df_new['My Deck Winrate'].astype(str)
+        has_pct_my = my_wr_raw.str.contains('%', regex=False)
+        my_wr_clean = my_wr_raw.str.replace('%', '', regex=False).str.replace(',', '.', regex=False)
+        my_wr_num = pd.to_numeric(my_wr_clean, errors='coerce')
+        if has_pct_my.any() or (pd.notna(my_wr_num).any() and my_wr_num.max() > 1):
+            my_wr_num = my_wr_num / 100
+        df_new['My Deck Winrate'] = my_wr_num
+    elif 'My Winrate' in df_new.columns:
+        # Backward compatibility: accept old column name, rename it
+        print("Info: 'My Winrate' column found - renamed to 'My Deck Winrate' (update your template)")
+        my_wr_raw = df_new['My Winrate'].astype(str)
+        has_pct_my = my_wr_raw.str.contains('%', regex=False)
+        my_wr_clean = my_wr_raw.str.replace('%', '', regex=False).str.replace(',', '.', regex=False)
+        my_wr_num = pd.to_numeric(my_wr_clean, errors='coerce')
+        if has_pct_my.any() or (pd.notna(my_wr_num).any() and my_wr_num.max() > 1):
+            my_wr_num = my_wr_num / 100
+        df_new['My Deck Winrate'] = my_wr_num
+        df_new = df_new.drop(columns=['My Winrate'])
+    else:
+        df_new['My Deck Winrate'] = pd.NA
     if 'Archetype' not in df_new.columns:
         df_new['Archetype'] = pd.NA
 
@@ -644,8 +680,10 @@ def try_pick_directory_dialog(title):
     except Exception:
         return ""
 
+
+# ===================== v1.4 PROMPTS AND NEW FEATURES =====================
 print("\n" + "="*80)
-print("MTG METAGAME ANALYSIS - START")
+print("MTG METAGAME ANALYSIS v1.4 - START")
 print("="*80 + "\n")
 
 missing_pkgs, outdated_pkgs = check_runtime_requirements()
@@ -653,31 +691,8 @@ if not offer_install_requirements(missing_pkgs, outdated_pkgs):
     sys.exit(1)
 
 if IN_COLAB:
-    from google.colab import files
-
-    # Upload Excel file
-    print("📁 Upload Excel file (columns: Deck, Meta, Winrate):")
-    uploaded = files.upload()
-
-    if not uploaded:
-        print("❌ No file uploaded. Exiting.")
-        sys.exit(1)
-
-    excel_file = list(uploaded.keys())[0]
-    print(f"✓ Loaded: {excel_file}\n")
-
-    # Upload history file (optional)
-    print("📁 (OPTIONAL) Upload CSV history file:")
-    print("   If you don't have history, just click 'Cancel' below.\n")
-    try:
-        uploaded_hist = files.upload()
-        history_csv = list(uploaded_hist.keys())[0] if uploaded_hist else None
-        if history_csv:
-            print(f"✓ History loaded: {history_csv}\n")
-    except Exception:
-        uploaded_hist = {}
-        history_csv = None
-        print("ℹ Continuing without history\n")
+    print("Colab upload/download not supported in this version. Please provide file paths manually.")
+    sys.exit(1)
     output_dir = os.getcwd()
 else:
     excel_file = try_pick_file_dialog(
@@ -726,147 +741,330 @@ except Exception:
     min_encounter_pct = 5.0
 min_encounter_threshold = min_encounter_pct / 100
 
-print(f"\n🔄 Starting analysis (N={N_players} players, rounds={rounds}, min encounter: {min_encounter_pct:g}%)...\n")
-print("ℹ Rounds/opponents only affect encounter probability; meta share and trends use Meta.")
+# NEW in v1.4: Deck name for chart titles
+print("\n--- Your Deck Settings (NEW in v1.4) ---")
+try:
+    deck_name_input = input("Your deck name (press Enter for default 'My Deck'): ").strip()
+    player_deck_name = deck_name_input if deck_name_input else "My Deck"
+except Exception:
+    player_deck_name = "My Deck"
+print(f"Deck name set to: {player_deck_name}")
 
-# Run analysis
+# NEW in v1.4: Player overall winrate for record probability chart
+print("\n--- Record Probability Settings (NEW in v1.4) ---")
+print("Your overall winrate is used to calculate your expected record distribution.")
+print("If you don't know it, press Enter to use 50% (neutral assumption).")
+try:
+    player_wr_input = input("Your overall winrate (e.g. 0.55 or 55%, default 50%): ").strip()
+    if not player_wr_input:
+        player_overall_winrate = 0.50
+    else:
+        player_overall_winrate = float(player_wr_input.replace('%', '').replace(',', '.'))
+        if player_overall_winrate > 1:
+            player_overall_winrate /= 100
+        player_overall_winrate = max(0.01, min(0.99, player_overall_winrate))
+except Exception:
+    player_overall_winrate = 0.50
+    print("Could not parse winrate - using 50%")
+print(f"Player winrate set to: {player_overall_winrate:.1%}")
+
+print(f"\nStarting analysis (N={N_players}, rounds={rounds}, min encounter: {min_encounter_pct:g}%, player WR: {player_overall_winrate:.1%})...\n")
+print("Note: rounds/opponents affect encounter probability only; meta share and trends use the Meta column.")
+
+# Run main analysis
 df_results, df_history, week_num, N_players, rounds = analyze_metagame(
     excel_file, history_csv, N_players, sample_size=rounds
 )
 
-print(f"\n✓ History: {df_history.shape[0]} rows, {df_history['WeekIndex'].nunique()} weeks")
+print(f"\nHistory: {df_history.shape[0]} rows, {df_history['WeekIndex'].nunique()} weeks")
 
 # Generate archetype charts
-print("\n📊 Generating archetype charts...")
+print("\nGenerating archetype encounter chart...")
 df_arch = aggregate_by_archetype(df_results)
 df_arch = calculate_archetype_metrics(df_arch, N_players, sample_size=rounds)
 arch_chart = create_encounter_probability_chart(
-    df_arch,
-    week_num,
-    N_players,
-    chart_type="Archetype",
-    min_encounter_threshold=min_encounter_threshold,
-    output_dir=output_dir,
+    df_arch, week_num, N_players, chart_type="Archetype",
+    min_encounter_threshold=min_encounter_threshold, output_dir=output_dir
 )
 
-# Generate deck charts
-print("\n📊 Generating deck charts...")
+# Generate deck encounter chart
+print("\nGenerating deck encounter chart...")
 deck_chart = create_encounter_probability_chart(
-    df_results,
-    week_num,
-    N_players,
-    chart_type="Deck",
-    min_encounter_threshold=min_encounter_threshold,
-    output_dir=output_dir,
+    df_results, week_num, N_players, chart_type="Deck",
+    min_encounter_threshold=min_encounter_threshold, output_dir=output_dir
 )
 
-# df_history already contains both decks and archetypes (added in analyze_metagame)
-# No need to add archetypes again - use df_history directly
-df_history_combined = df_history.copy()
+# NEW in v1.4: My Deck Performance chart
+def create_my_deck_performance_chart(df_results, week_num, N_players, min_encounter_threshold=0.05, player_deck_name="My Deck"):
+    my_wr_col = 'My Deck Winrate'
+    df_my = df_results[df_results[my_wr_col].notna()].copy()
+    if len(df_my) == 0:
+        print("Info: No 'My Deck Winrate' data in input - skipping my deck performance chart.")
+        print("      Fill in 'My Deck Winrate' column in your Excel template to enable this chart.")
+        return None
+    df_show = df_my[df_my['Encounter Probability'] >= min_encounter_threshold].copy()
+    if len(df_show) == 0:
+        print("Info: No decks with My Deck Winrate above encounter threshold - using all.")
+        df_show = df_my.copy()
+    df_show['Problem Score'] = df_show['Encounter Probability'] * (1 - df_show[my_wr_col])
+    df_show = df_show.sort_values('Problem Score', ascending=False).reset_index(drop=True)
+    num_decks = len(df_show)
+    fig_width = max(14, num_decks * 1.3)
+    fig, ax = plt.subplots(figsize=(fig_width, 10))
+    norm = plt.Normalize(vmin=0, vmax=1)
+    cmap = plt.cm.RdYlGn
+    bar_colors = [cmap(norm(float(wr))) for wr in df_show[my_wr_col]]
+    bars = ax.bar(range(num_decks), df_show['Encounter Probability'],
+                  color=bar_colors, edgecolor='black', linewidth=0.6, alpha=0.92)
+    for i, (bar, enc_prob, my_wr, prob_score) in enumerate(zip(
+        bars, df_show['Encounter Probability'], df_show[my_wr_col], df_show['Problem Score']
+    )):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.018,
+               f'{enc_prob:.1%}',
+               ha='center', va='bottom', fontsize=10, fontweight='bold', color='black')
+        bar_h = bar.get_height()
+        if bar_h > 0.07:
+            text_y = bar_h / 2
+            text_color = 'white' if (float(my_wr) < 0.3 or float(my_wr) > 0.72) else 'black'
+            ax.text(bar.get_x() + bar.get_width() / 2, text_y,
+                   f'WR: {float(my_wr):.0%}',
+                   ha='center', va='center', fontsize=9, fontweight='bold', color=text_color)
+    rotation_angle = 30 if num_decks < 12 else 45 if num_decks < 20 else 60
+    for i, (deck, perf) in enumerate(zip(df_show['Deck Display Name'], df_show['Performance Label'])):
+        ax.text(i, -0.03, deck, ha='right', va='top', fontsize=9, rotation=rotation_angle,
+               color=PERFORMANCE_COLORS.get(perf, 'black'))
+    ax.tick_params(axis='x', which='both', length=0, labelbottom=False)
+    ax.spines['bottom'].set_visible(False)
+    ax.set_ylabel('Encounter Probability', fontsize=13)
+    ax.set_ylim(0, 1.15)
+    title = (
+        f'{player_deck_name} Performance vs Metagame - Week {week_num}\n'
+        f'Sorted by Problem Score (Encounter Prob x Loss Rate) | N={N_players}'
+    )
+    ax.set_title(title, fontsize=14, pad=20)
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax, orientation='vertical', fraction=0.025, pad=0.02)
+    cbar.set_label('My Winrate Against This Deck', fontsize=11)
+    cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
+    cbar.set_ticklabels(['0% (0-X)', '25%', '50%', '75%', '100% (X-0)'])
+    perf_patches = [
+        Patch(facecolor=PERFORMANCE_COLORS['Underplayed Winner'], label='Underplayed Winner'),
+        Patch(facecolor=PERFORMANCE_COLORS['Popular Trap'], label='Popular Trap'),
+        Patch(facecolor=PERFORMANCE_COLORS['Neutral'], label='Neutral')
+    ]
+    ax.legend(handles=perf_patches, title="Deck Performance (meta)", loc='upper right', fontsize=9)
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.38, right=0.88)
+    out_png = os.path.join(output_dir, f'my_deck_performance_W{week_num}.png')
+    plt.savefig(out_png, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.show(block=False)
+    plt.pause(0.1)
+    plt.close()
+    print(f"Saved: {out_png}  ({len(df_show)} decks with My Deck Winrate data)")
+    return out_png
 
-# Save files
+print("\nGenerating My Deck Performance chart (v1.4)...")
+my_deck_chart = create_my_deck_performance_chart(
+    df_results, week_num, N_players, min_encounter_threshold=min_encounter_threshold,
+    player_deck_name=player_deck_name
+)
+
+# NEW in v1.4: Record Probability chart
+def create_record_probability_chart(player_winrate, df_results, rounds, week_num, player_deck_name="My Deck"):
+    player_records = calculate_binomial_records(player_winrate, rounds)
+    records_list = list(player_records.keys())
+    probs_list = list(player_records.values())
+    fig, axes = plt.subplots(1, 2, figsize=(20, 9))
+    fig.suptitle(f'Record Probability Analysis - Week {week_num} ({rounds}-round event)', fontsize=15, y=1.01)
+    ax1 = axes[0]
+    bar_colors_left = plt.cm.RdYlGn(np.linspace(0, 1, len(records_list)))
+    bars1 = ax1.bar(records_list, probs_list, color=bar_colors_left, edgecolor='black', linewidth=0.6, alpha=0.9)
+    for bar, prob in zip(bars1, probs_list):
+        ax1.text(
+            bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.005,
+            f'{prob:.1%}', ha='center', va='bottom', fontsize=11, fontweight='bold'
+        )
+    ax1.set_xlabel('Record (W-L)', fontsize=12)
+    ax1.set_ylabel('Probability', fontsize=12)
+    ax1.set_title(
+        f'{player_deck_name} Record Distribution\nOverall Winrate: {player_winrate:.1%} | Expected: {player_winrate * rounds:.1f}-{(1 - player_winrate) * rounds:.1f}',
+        fontsize=13
+    )
+    ax1.set_ylim(0, max(probs_list) * 1.25)
+    ax1.tick_params(axis='x', labelsize=10)
+    best_idx = int(np.argmax(probs_list))
+    bars1[best_idx].set_edgecolor('gold')
+    bars1[best_idx].set_linewidth(3)
+    ax1.text(
+        bars1[best_idx].get_x() + bars1[best_idx].get_width() / 2,
+        max(probs_list) * 1.15,
+        'Most likely', ha='center', fontsize=9, color='goldenrod', fontweight='bold'
+    )
+    ax2 = axes[1]
+    df_sorted = df_results.sort_values('Winrate', ascending=False).head(20).reset_index(drop=True)
+    deck_names = df_sorted['Deck Display Name'].tolist()
+    deck_winrates = df_sorted['Winrate'].tolist()
+    expected_wins = [wr * rounds for wr in deck_winrates]
+    norm2 = plt.Normalize(vmin=0, vmax=1)
+    bar_colors_right = [plt.cm.RdYlGn(norm2(wr)) for wr in deck_winrates]
+    bars2 = ax2.barh(range(len(deck_names)), expected_wins,
+                     color=bar_colors_right, edgecolor='black', linewidth=0.5, alpha=0.9)
+    ax2.set_yticks(range(len(deck_names)))
+    ax2.set_yticklabels(deck_names, fontsize=8)
+    ax2.set_xlabel('Expected Wins', fontsize=12)
+    ax2.set_title(
+        f'Expected Wins per Deck\nBased on deck winrate | {rounds} rounds',
+        fontsize=13
+    )
+    ax2.set_xlim(0, rounds + 0.5)
+    ax2.axvline(x=rounds / 2, color='gray', linestyle='--', alpha=0.6, linewidth=1.5, label='50% line')
+    ax2.legend(fontsize=9)
+    for bar, wr, ew in zip(bars2, deck_winrates, expected_wins):
+        ax2.text(
+            bar.get_width() + 0.07, bar.get_y() + bar.get_height() / 2,
+            f'{wr:.1%}  ({ew:.1f}W)', va='center', fontsize=8
+        )
+    sm2 = plt.cm.ScalarMappable(cmap=plt.cm.RdYlGn, norm=norm2)
+    sm2.set_array([])
+    cbar2 = plt.colorbar(sm2, ax=ax2, orientation='vertical', fraction=0.025, pad=0.02)
+    cbar2.set_label('Deck Winrate', fontsize=10)
+    cbar2.set_ticks([0, 0.5, 1.0])
+    cbar2.set_ticklabels(['0%', '50%', '100%'])
+    plt.tight_layout()
+    out_png = os.path.join(output_dir, f'record_probability_W{week_num}.png')
+    plt.savefig(out_png, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.show(block=False)
+    plt.pause(0.1)
+    plt.close()
+    print(f"Saved: {out_png}")
+    return out_png
+
+print("\nGenerating Record Probability chart (v1.4)...")
+record_chart = create_record_probability_chart(
+    player_overall_winrate, df_results, rounds, week_num, player_deck_name=player_deck_name
+)
+
+# NEW in v1.4: Record Probability Excel table
+def build_record_probability_excel(df_results, player_winrate, rounds, week_num):
+    record_labels = [f"{w}-{rounds-w}" for w in range(rounds, -1, -1)]
+    rows = []
+    player_row = {'Deck': 'YOU (overall winrate)', 'Meta': '', 'Deck Winrate': f'{player_winrate:.1%}'}
+    player_probs = calculate_binomial_records(player_winrate, rounds)
+    for label in record_labels:
+        player_row[label] = f"{player_probs.get(label, 0):.1%}"
+    rows.append(player_row)
+    for _, r in df_results.sort_values('Meta', ascending=False).iterrows():
+        wr = r.get('Winrate', 0.5)
+        if pd.isna(wr):
+            wr = 0.5
+        deck_probs = calculate_binomial_records(wr, rounds)
+        row = {
+            'Deck': r.get('Deck Display Name', r.get('Deck', '')),
+            'Meta': f"{r['Meta']:.1f}%",
+            'Deck Winrate': f'{wr:.1%}'
+        }
+        for label in record_labels:
+            row[label] = f"{deck_probs.get(label, 0):.1%}"
+        rows.append(row)
+    df_out = pd.DataFrame(rows)
+    excel_path = os.path.join(output_dir, f'record_probabilities_W{week_num}.xlsx')
+    df_out.to_excel(excel_path, index=False)
+    print(f"Saved: {excel_path}")
+    return excel_path
+
+print("\nBuilding Record Probability Excel table (v1.4)...")
+record_excel = build_record_probability_excel(df_results, player_overall_winrate, rounds, week_num)
+
+# Save standard files
 excel_out = os.path.join(output_dir, f'deck_analysis_W{week_num}.xlsx')
 csv_out = os.path.join(output_dir, f'Metagame_History_W{week_num}.csv')
 arch_excel_out = os.path.join(output_dir, f'deck_analysis_ARCHETYPE_W{week_num}.xlsx')
 
 df_results.to_excel(excel_out, index=False)
 df_arch.to_excel(arch_excel_out, index=False)
-df_history_combined.to_csv(csv_out, index=False)
+df_history.to_csv(csv_out, index=False)
+print(f"\nSaved: {excel_out}, {arch_excel_out}, {csv_out}")
 
-print(f"\n💾 Saved: {excel_out}, {arch_excel_out}, {csv_out}")
-
-# Trend chart (if history available)
+# Trend charts (if history available)
 trend_chart = None
+arch_trend_chart = None
 unique_weeks = df_history['WeekIndex'].nunique() if len(df_history) > 0 else 0
 
 if unique_weeks > 1:
     try:
-        weeks_back = int(input("\n📈 How many weeks back for trend chart? (default 4): ").strip() or 4)
+        weeks_back = int(input("\nHow many weeks back for trend chart? (default 4): ").strip() or 4)
         weeks_back = max(2, min(weeks_back, int(df_history['WeekIndex'].max())))
     except Exception:
         weeks_back = 4
-    
-    print(f"\n📊 Generating trend chart (last {weeks_back} weeks)...")
-    trend_chart = create_trend_chart(
-        df_history,
-        df_results,
-        weeks_back,
-        week_num,
-        chart_type="Deck",
-        output_dir=output_dir,
-    )
-    
-    # Generate archetype trend chart
-    print(f"📊 Generating archetype trend chart (last {weeks_back} weeks)...")
+    print(f"\nGenerating trend chart (last {weeks_back} weeks)...")
+    trend_chart = create_trend_chart(df_history, df_results, weeks_back, week_num, chart_type="Deck", output_dir=output_dir)
+    print(f"Generating archetype trend chart (last {weeks_back} weeks)...")
     df_arch_for_trends = df_history[df_history['Level'] == 'Archetype'].copy() if 'Level' in df_history.columns else pd.DataFrame()
     if len(df_arch_for_trends) > 0:
-        arch_trend_chart = create_trend_chart(
-            df_history,
-            df_arch,
-            weeks_back,
-            week_num,
-            chart_type="Archetype",
-            output_dir=output_dir,
-        )
+        arch_trend_chart = create_trend_chart(df_history, df_arch, weeks_back, week_num, chart_type="Archetype", output_dir=output_dir)
     else:
-        print("ℹ No archetype history available for trend chart")
-        arch_trend_chart = None
-    
+        print("Info: No archetype history available for trend chart")
     df_results['Trend Status'] = df_results['Deck'].apply(
         lambda d: calculate_deck_trend_status(df_history, d, weeks_back)[0]
     )
-    
     excel_out_trend = os.path.join(output_dir, f'deck_analysis_WITH_TRENDS_W{week_num}.xlsx')
     df_results.to_excel(excel_out_trend, index=False)
-    print(f"💾 Saved: {excel_out_trend}")
+    print(f"Saved: {excel_out_trend}")
 else:
-    print("\nℹ Trend chart requires at least 2 weeks of history")
-    trend_chart = None
-    arch_trend_chart = None
+    print("\nInfo: Trend chart requires at least 2 weeks of history")
+    excel_out_trend = None
 
-# Show top decks
-print("\n📊 TOP Very High Prep Priority Decks:")
+# Summary
+print("\nTop Very High Prep Priority Decks:")
 top_df = df_results[df_results['Prep Priority'] == 'Very High Prep Priority'][
     ['Deck Display Name', 'Meta', 'Winrate', 'Encounter Probability', 'Prep Priority']
 ].head(10)
-if IN_COLAB:
-    display(top_df)
-else:
-    print(top_df.to_string(index=False))
+print(top_df.to_string(index=False))
 
-print(f"\n📈 Encounter probability range (N={N_players}): {df_results['Encounter Probability'].min():.1%} - {df_results['Encounter Probability'].max():.1%}")
+my_deck_rows = df_results['My Deck Winrate'].notna().sum()
+if my_deck_rows > 0:
+    print(f"\nMy Deck Winrate: {my_deck_rows} decks with data")
+    problem = df_results[df_results['My Deck Winrate'].notna()].copy()
+    problem['Problem Score'] = problem['Encounter Probability'] * (1 - problem['My Deck Winrate'])
+    problem = problem.sort_values('Problem Score', ascending=False).head(5)
+    print("Top 5 matchups to fix (highest Problem Score):")
+    for _, row in problem.iterrows():
+        print(f"  {row['Deck Display Name']}: encounter {row['Encounter Probability']:.1%}, your WR {row['My Deck Winrate']:.1%}, problem score {row['Problem Score']:.3f}")
 
-# Download all files as ZIP
-print("\n📦 Preparing files for download...")
-outputs = [excel_out, csv_out, arch_excel_out, arch_chart, deck_chart]
+print(f"\nRecord probability for {player_overall_winrate:.1%} winrate over {rounds} rounds:")
+player_recs = calculate_binomial_records(player_overall_winrate, rounds)
+for rec, prob in player_recs.items():
+    print(f"  {rec}: {prob:.1%}")
+
+# Package into ZIP
+print("\nPreparing ZIP download...")
+outputs = [excel_out, csv_out, arch_excel_out, arch_chart, deck_chart, record_excel]
+if my_deck_chart:
+    outputs.append(my_deck_chart)
+if record_chart:
+    outputs.append(record_chart)
 if trend_chart:
     outputs.append(trend_chart)
 if arch_trend_chart:
     outputs.append(arch_trend_chart)
-if 'excel_out_trend' in locals():
+if excel_out_trend:
     outputs.append(excel_out_trend)
 
-existing = [p for p in outputs if os.path.exists(p)]
+existing = [p for p in outputs if p and os.path.exists(p)]
 
 if len(existing) > 1:
     zip_name = f'MTG_Analysis_W{week_num}.zip'
     zip_path = os.path.join(output_dir, zip_name)
     with zipfile.ZipFile(zip_path, 'w') as zf:
-        for file in existing:
-            zf.write(file)
-    if IN_COLAB:
-        print(f"✅ Downloading: {zip_path}")
-        files.download(zip_path)
-    else:
-        print(f"✅ Created: {zip_path}")
+        for f in existing:
+            zf.write(f)
+    print(f"Created: {zip_path}")
 else:
-    for file in existing:
-        if IN_COLAB:
-            print(f"✅ Downloading: {file}")
-            files.download(file)
-        else:
-            print(f"✅ Created: {file}")
+    for f in existing:
+        print(f"Created: {f}")
 
-print("\n" + "="*80)
-print("✅ ANALYSIS COMPLETED SUCCESSFULLY!")
-print("="*80)
+print("\n" + "=" * 80)
+print("ANALYSIS COMPLETED - v1.4")
+print("New outputs: my_deck_performance, record_probability chart + Excel")
+print("=" * 80)

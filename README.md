@@ -27,67 +27,91 @@ A comprehensive Python tool for analyzing Magic: The Gathering metagame data, ge
 
 ### Option 2: Local Installation
 
-**Requirements:**
-- Python 3.8+
-- See `requirements.txt` for dependencies
 
-**Installation:**
-```bash
-git clone https://github.com/yourusername/MTG-Metagame-Analyzer.git
-cd MTG-Metagame-Analyzer
+# MTG Metagame Analyzer v1.4
+
+Analyze Magic: The Gathering (MTG) metagame data to understand trends, deck performance, matchup probabilities, and more. This tool generates insightful charts and Excel outputs from your metagame data, supporting both competitive players and deckbuilders.
+
+---
+
+## What's New in v1.4
+
+- **Renamed Input Column:** "My Winrate" → **"My Deck Winrate"**
+- **New Chart:** My Deck Performance (encounter probability colored by your winrate)
+- **New Chart:** Record Probability Distribution (binomial model for 5-0, 4-1, etc.)
+- **New Excel Output:** Record probabilities per deck
+- **Improved Input Normalization:** Accepts both decimal and percent formats for winrates and meta
+- **Backward Compatibility:** Accepts old "My Winrate" column (auto-renamed)
+
+---
+
+## Input File Format
+
+Provide an Excel file (.xlsx) with the following columns:
+
+| Column             | Required | Description                                                      |
+|--------------------|----------|------------------------------------------------------------------|
+| Deck               | Yes      | Name of the deck                                                 |
+| Meta               | Yes      | Meta share (%) (can be decimal or percent, e.g. 12.5 or 12.5%)   |
+| Winrate            | Yes      | Deck winrate (decimal or %, e.g. 0.58 or 58%)                    |
+| Archetype          | No       | Archetype name (optional)                                        |
+| My Deck Winrate    | No       | Your winrate vs this deck (decimal or %, e.g. 0.62 or 62%)       |
+
+**Note:** "My Deck Winrate" is your personal winrate against each deck. If not provided, related charts are skipped.
+
+---
+
+## Usage
+
+1. Run the script:
+	```sh
+	python src/mtg_analyzer.py
+	```
+2. Enter the path to your Excel file when prompted.
+3. (Optional) Enter a CSV history file for trend analysis.
+4. Follow prompts for player count, rounds, and other settings.
+5. Review generated charts and Excel outputs in the working directory.
+
+---
+
+## Outputs
+
+- **Encounter Probability Charts:** For decks and archetypes
+- **My Deck Performance Chart:** Shows your toughest matchups (NEW in v1.4)
+- **Record Probability Chart:** Binomial model for your and all decks' records (NEW in v1.4)
+- **Record Probability Excel:** Table of record probabilities for all decks (NEW in v1.4)
+- **Excel Summary Tables:** Deck and archetype analysis
+- **Metagame History CSV:** Tracks meta and trends over time
+- **ZIP Archive:** All outputs packaged for easy sharing
+
+---
+
+## Requirements
+
+- Python 3.8+
+- pandas
+- matplotlib
+- numpy
+- openpyxl
+- mplcursors
+
+Install dependencies:
+
+```sh
 pip install -r requirements.txt
 ```
 
-**Running the script:**
-```bash
-python src/mtg_analyzer.py
-```
-The script will prompt you for:
-- Path to your Excel input file
-- Optional path to a history CSV (press Enter to skip)
+---
 
-## Input Data Format
+## Contributing
 
-### Excel File (Required)
-Your Excel file must contain these columns:
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-| Column | Description | Example |
-|--------|-------------|---------|
-| `Deck` | Deck name (can include symbols □■▪•) | "Boros Energy □" |
-| `Meta` | Metagame percentage | 5.2 |
-| `Winrate` | Win rate as decimal | 0.52 |
-| `Archetype` | (Optional) Deck archetype | "Aggro" |
-| `My Winrate` | (Optional) Your personal win rate | 0.58 |
+---
 
-Accepted numeric formats:
-- Meta: 5.2, 5,2, 5.2%, 5,2%
-- Winrate: 0.52, 52%, 52.0%
+## License
 
-### CSV History File (Optional)
-For trend analysis, provide a CSV with historical data. Same columns as above plus:
-- `WeekIndex`: Week number (auto-calculated if not provided)
-
-## Output Files
-
-The script generates:
-
-1. **deck_analysis_W{N}.xlsx** - Detailed deck metrics for week N
-2. **deck_analysis_ARCHETYPE_W{N}.xlsx** - Archetype-level aggregation
-3. **Metagame_History_W{N}.csv** - Updated history file (use as input next week)
-4. **encounter_prob_Deck_W{N}.png** - Bar chart of encounter probabilities (by deck)
-5. **encounter_prob_Archetype_W{N}.png** - Bar chart of encounter probabilities (by archetype)
-6. **meta_trend_Deck_W{N}_last{X}w.png** - Trend line chart for top 10 decks (if history available)
-7. **meta_trend_Archetype_W{N}_last{X}w.png** - Trend line chart for archetypes (if history available)
-
-All files are packaged in `MTG_Analysis_W{N}.zip`
-
-## Calculations Explained
-
-### Encounter Probability
-Uses hypergeometric distribution to calculate the probability of facing a specific deck in an N-player event:
-
-- **N**: Total estimated event players
-- **K**: Number of players piloting the deck
+This project is licensed under the MIT License.
 - **Sample**: Number of rounds/opponents you expect to face (default 5)
 - Formula: $P(\text{encounter} \ge 1 \text{ out of sample})$
 
