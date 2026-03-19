@@ -339,6 +339,7 @@ def build_dataset(
     my_deck: str,
     my_window_days: int,
     my_fallback_window_days: int,
+    rogue_threshold: float,
     rules: List[ArchetypeRule],
     aliases: List[DeckAliasRule],
     user_mapping: Dict[str, UserDeckMapping],
@@ -400,7 +401,7 @@ def build_dataset(
         archetype = apply_archetype_overrides(raw_deck_name, deck_name, meta_share, archetype)
 
         deck_lookup_name = deck_name
-        if meta_share is not None and meta_share < 0.5:
+        if meta_share is not None and meta_share < rogue_threshold:
             deck_name = "Rogue"
             archetype = "Rogue"
 
@@ -702,6 +703,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--my-deck", default="Domain Zoo")
     parser.add_argument("--my-window-days", type=int, default=90, help="np. 30 lub 90")
     parser.add_argument("--my-fallback-window-days", type=int, default=180, help="okno fallback dla brakow, np. 180")
+    parser.add_argument("--rogue-threshold", type=float, default=0.5, help="próg Meta (%) poniżej którego deck wpada do Rogue")
     parser.add_argument("--metagame-limit", type=int, default=64)
     parser.add_argument("--matchup-limit", type=int, default=300)
     parser.add_argument(
@@ -789,6 +791,7 @@ def main() -> None:
             my_deck=args.my_deck,
             my_window_days=args.my_window_days,
             my_fallback_window_days=args.my_fallback_window_days,
+            rogue_threshold=args.rogue_threshold,
             rules=rules,
             aliases=aliases,
             user_mapping=user_mapping,
@@ -812,6 +815,7 @@ def main() -> None:
                 f"rows={len(dataset)} | primary={my_wr_stats['primary']} | "
                 f"180d={my_wr_stats['fallback']} | 50%={my_wr_stats['imputed']}"
             )
+            print(f"✅ Rogue threshold: Meta < {args.rogue_threshold}%")
             print(f"✅ Dir: {range_dir}")
             print(f"✅ Files: {final_xlsx}")
             print(f"✅ Files (Rogue grouped): {grouped_final_xlsx}")
@@ -845,6 +849,7 @@ def main() -> None:
         print(f"✅ My Deck Winrate primary ({args.my_window_days}d): {my_wr_stats['primary']}/{len(dataset)}")
         print(f"✅ My Deck Winrate fallback ({args.my_fallback_window_days}d): {my_wr_stats['fallback']}")
         print(f"✅ My Deck Winrate fallback 50%: {my_wr_stats['imputed']}")
+        print(f"✅ Rogue threshold: Meta < {args.rogue_threshold}%")
         print(f"✅ CSV: {final_csv}")
         print(f"✅ XLSX: {final_xlsx}")
         print(f"✅ CSV (Rogue grouped): {grouped_csv}")

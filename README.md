@@ -19,11 +19,13 @@ A comprehensive Python tool for analyzing Magic: The Gathering metagame data, ge
 ### Option 1: Google Colab (Recommended for non-technical users)
 
 1. Open [Google Colab](https://colab.research.google.com)
-2. Copy the entire content from `docs/SCRIPT_FULL.txt` (or `src/mtg_analyzer.py`)
-3. Paste it into a new Colab notebook
-4. Click **Runtime** → **Run all** (or press Ctrl+F9)
-5. Upload your Excel file when prompted
-6. Download results as ZIP
+2. Upload and run [docs/COLAB_INPUT_GENERATOR.ipynb](docs/COLAB_INPUT_GENERATOR.ipynb)
+3. Set parameters in the notebook (format, history points, windows, deck)
+4. Run all cells to generate ready input files in `outputs/`
+5. Download generated ZIP from Colab
+
+This notebook is focused on data generation (metagame input + history files).
+For full chart/report analysis, use `src/mtg_analyzer.py` with the generated XLSX.
 
 ### Option 2: Local Installation
 
@@ -84,7 +86,8 @@ python src/build_metagame_input.py \
   --week-start 2026-03-09 \
   --week-end 2026-03-15 \
   --my-deck "Domain Zoo" \
-  --my-window-days 90
+  --my-window-days 90 \
+  --rogue-threshold 0.5
 ```
 
 Skrypt:
@@ -93,6 +96,7 @@ Skrypt:
 - pobiera matchupy dla Twojego decku (domyślnie `Domain Zoo`) z okna 30/90 dni,
 - wpisuje je jako `My Deck Winrate`,
 - mapuje `Archetype` automatycznie (reguły + heurystyka),
+- wrzuca decki z `Meta < rogue-threshold` do wspólnego koszyka `Rogue`,
 - eksportuje gotowe pliki:
   - `outputs/metagame_input.xlsx`
   - `outputs/metagame_input.csv`
