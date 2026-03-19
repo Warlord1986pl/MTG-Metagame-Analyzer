@@ -14,7 +14,7 @@ This release separates data preparation from analysis so users can:
 
 ## Major Additions
 
-- New generator script: `src/build_metagame_input.py`
+- New generator script: `src/metagame_input_generator.py`
 - New Colab notebook for data generation: `docs/COLAB_INPUT_GENERATOR.ipynb`
 - New configurable Rogue cutoff parameter: `--rogue-threshold`
 - New date-range folder organization for weekly and historical runs
@@ -84,7 +84,7 @@ pip install -r requirements.txt
 3. Run weekly generation:
 
 ```sh
-python src/build_metagame_input.py \
+python src/metagame_input_generator.py \
   --format Modern \
   --history-points 1 \
   --metagame-window-days 14 \
@@ -103,7 +103,8 @@ python src/build_metagame_input.py \
 
 ## Recommended v1.5 Workflow
 
-1. Generate inputs with `build_metagame_input.py` (local or Colab).
+1. Generate inputs with `metagame_input_generator.py` (local or Colab).
 2. Validate XLSX output quickly (including color-coded fallback indicators).
 3. Run full metagame analysis with `mtg_analyzer.py`.
 4. Archive weekly date-range folder into your long-term history.
+

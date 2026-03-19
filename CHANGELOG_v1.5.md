@@ -6,7 +6,7 @@ This release introduces a production-ready metagame input generator pipeline wit
 
 ## Highlights
 
-- New standalone input-generation tool: `src/build_metagame_input.py`
+- New standalone input-generation tool: `src/metagame_input_generator.py`
 - New Colab notebook for data generation: `docs/COLAB_INPUT_GENERATOR.ipynb`
 - Configurable metagame cutoff for Rogue bucketing via `--rogue-threshold`
 - Automatic weekly and history snapshot folder structure by date range
@@ -14,7 +14,7 @@ This release introduces a production-ready metagame input generator pipeline wit
 
 ## Added
 
-- New script: `src/build_metagame_input.py`
+- New script: `src/metagame_input_generator.py`
 - New Colab notebook: `docs/COLAB_INPUT_GENERATOR.ipynb`
 - New CLI option: `--rogue-threshold` (default `0.5`)
 - New CLI options for history generation:
@@ -75,7 +75,7 @@ pip install -r requirements.txt
 3. Generate weekly input set:
 
 ```sh
-python src/build_metagame_input.py \
+python src/metagame_input_generator.py \
   --format Modern \
   --history-points 1 \
   --metagame-window-days 14 \
@@ -92,12 +92,13 @@ python src/build_metagame_input.py \
 - v1.5 does not remove `src/mtg_analyzer.py`.
 - The new generator is a separate data-prep tool.
 - Recommended workflow:
-  1. Generate inputs with `build_metagame_input.py` (local or Colab)
+  1. Generate inputs with `metagame_input_generator.py` (local or Colab)
   2. Analyze generated XLSX/CSV with `mtg_analyzer.py`
 
 ## Files Updated in v1.5
 
-- `src/build_metagame_input.py`
+- `src/metagame_input_generator.py`
 - `docs/COLAB_INPUT_GENERATOR.ipynb`
 - `README.md`
 - `CHANGELOG_v1.5.md` (this file)
+

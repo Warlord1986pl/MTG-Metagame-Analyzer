@@ -12,7 +12,7 @@ This tool does not replace `src/mtg_analyzer.py`. It prepares better input for i
 
 ## What This Tool Does
 
-Script: `src/build_metagame_input.py`
+Script: `src/metagame_input_generator.py`
 
 It creates files with:
 
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 ### 3. Run a standard weekly snapshot
 
 ```sh
-python src/build_metagame_input.py \
+python src/metagame_input_generator.py \
   --format Modern \
   --history-points 1 \
   --metagame-window-days 14 \
@@ -201,3 +201,4 @@ Outputs go to:
    - standard
    - Rogue-grouped
 4. Always inspect sample-size columns before strategic conclusions
+

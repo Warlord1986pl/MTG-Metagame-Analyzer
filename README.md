@@ -14,7 +14,7 @@ v1.5 introduces a separate data-generation workflow that prepares clean inputs f
 
 Recommended flow:
 
-1. Generate input files using `src/build_metagame_input.py` (or the Colab generator notebook)
+1. Generate input files using `src/metagame_input_generator.py` (or the Colab generator notebook)
 2. Run analysis with `src/mtg_analyzer.py` on generated XLSX/CSV data
 
 ## Features
@@ -96,7 +96,7 @@ Provide an Excel file (.xlsx) with the following columns:
 Jeśli chcesz mieć szybkie, powtarzalne źródło danych bez ręcznego przepisywania:
 
 ```sh
-python src/build_metagame_input.py \
+python src/metagame_input_generator.py \
   --format Modern \
   --week-start 2026-03-09 \
   --week-end 2026-03-15 \
@@ -315,3 +315,4 @@ MIT License - see LICENSE file for details
 ---
 
 **For detailed technical documentation**, see [DESCRIPTION.txt](docs/DESCRIPTION.txt)
+
