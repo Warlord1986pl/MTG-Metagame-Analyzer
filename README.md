@@ -2,6 +2,21 @@
 
 A comprehensive Python tool for analyzing Magic: The Gathering metagame data, generating probability charts, and tracking meta trends over time.
 
+## v1.5 Update
+
+v1.5 introduces a separate data-generation workflow that prepares clean inputs for analysis (local Python and Colab), including configurable Rogue thresholding and date-range output organization.
+
+### v1.5 Documentation
+
+- Release notes: [CHANGELOG_v1.5.md](CHANGELOG_v1.5.md)
+- Non-technical step-by-step guide: [docs/DATA_GENERATOR_GUIDE.md](docs/DATA_GENERATOR_GUIDE.md)
+- Colab notebook (data generation): [docs/COLAB_INPUT_GENERATOR.ipynb](docs/COLAB_INPUT_GENERATOR.ipynb)
+
+Recommended flow:
+
+1. Generate input files using `src/build_metagame_input.py` (or the Colab generator notebook)
+2. Run analysis with `src/mtg_analyzer.py` on generated XLSX/CSV data
+
 ## Features
 
 - **Encounter Probability Analysis**: Calculate the probability of facing specific decks in tournaments
