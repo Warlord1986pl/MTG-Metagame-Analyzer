@@ -64,13 +64,53 @@ Provide an Excel file (.xlsx) with the following columns:
 ## Usage
 
 1. Run the script:
-	```sh
-	python src/mtg_analyzer.py
-	```
+
+   ```sh
+   python src/mtg_analyzer.py
+   ```
+
 2. Enter the path to your Excel file when prompted.
 3. (Optional) Enter a CSV history file for trend analysis.
 4. Follow prompts for player count, rounds, and other settings.
 5. Review generated charts and Excel outputs in the working directory.
+
+### Weekly auto-import + Domain Zoo `My Deck Winrate`
+
+Jeśli chcesz mieć szybkie, powtarzalne źródło danych bez ręcznego przepisywania:
+
+```sh
+python src/build_metagame_input.py \
+  --format Modern \
+  --week-start 2026-03-09 \
+  --week-end 2026-03-15 \
+  --my-deck "Domain Zoo" \
+  --my-window-days 90
+```
+
+Skrypt:
+
+- pobiera tygodniowy metagame (`Deck`, `Meta`, `Winrate`),
+- pobiera matchupy dla Twojego decku (domyślnie `Domain Zoo`) z okna 30/90 dni,
+- wpisuje je jako `My Deck Winrate`,
+- mapuje `Archetype` automatycznie (reguły + heurystyka),
+- eksportuje gotowe pliki:
+  - `outputs/metagame_input.xlsx`
+  - `outputs/metagame_input.csv`
+  - `outputs/unknown_archetypes.csv`
+
+Reguły mapowania archetypów są w `docs/archetype_rules.csv`.
+Uzupełniaj tylko rekordy z `outputs/unknown_archetypes.csv`, a z czasem ręczna praca spadnie praktycznie do zera.
+
+Nazwy decków normalizujesz osobno w `docs/deck_aliases.csv` (np. `Sultai Midrange` -> `Sultai Ritual`).
+Aliasowanie dzieje się przed przypisaniem archetypu i przed mapowaniem `My Deck Winrate`, więc statystyki będą spójne między tygodniami.
+
+Najprostszy workflow: edytuj tylko `docs/user_deck_mapping.csv`.
+To jest Twój plik nadpisujący, gdzie możesz ręcznie ustawić:
+- `raw_name` (nazwa z API),
+- `canonical_name` (jak ma się nazywać u Ciebie),
+- `archetype` (np. Blink, Eldrazi, Combo).
+
+Jeśli wpis istnieje w `docs/user_deck_mapping.csv`, ma priorytet nad aliasami i auto-regułami.
 
 ---
 
